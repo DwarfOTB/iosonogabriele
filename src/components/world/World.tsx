@@ -5,15 +5,8 @@ import { Scene } from './Scene'
 import { CameraRig } from './CameraRig'
 import { Sol3D } from './Sol3D'
 import { ROOMS } from '@/data/rooms'
-import { useRoomNavigation } from '@/hooks/useRoomNavigation'
-
-function SolLoader() {
-  return null
-}
 
 export default function World() {
-  useRoomNavigation()
-
   return (
     <Canvas
       shadows
@@ -21,7 +14,7 @@ export default function World() {
       dpr={[1, 2]}
       camera={{ position: ROOMS[0].cameraPos, fov: 55 }}
     >
-      <Suspense fallback={<SolLoader />}>
+      <Suspense fallback={null}>
         <Scene />
         <CameraRig />
         <Sol3D />
