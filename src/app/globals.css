@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Playfair+Display:wght@400;700&family=Lora&family=Courier+Prime:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-sun-core: #F7C842;
+  --color-sun-warm: #F5A623;
+  --color-sun-deep: #E07B2A;
+
+  --color-red-primary: #D93025;
+  --color-red-warm: #C0392B;
+  --color-red-muted: #8B2E22;
+
+  --color-paper: #F4EDD8;
+  --color-paper-warm: #EDE0C4;
+  --color-paper-dark: #D9C9A8;
+
+  --color-ink: #1C1208;
+  --color-ink-soft: #3D2E1A;
+  --color-ink-faint: #7A6548;
+
+  --color-wood: #4A3018;
+  --color-wood-light: #6B4C2A;
+
+  /* Fonts */
+  --font-handwriting: 'Caveat', cursive;
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Lora', serif;
+  --font-mono: 'Courier Prime', monospace;
+}
+
+:root {
+  --background: #F4EDD8;
+  --foreground: #1C1208;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+}
