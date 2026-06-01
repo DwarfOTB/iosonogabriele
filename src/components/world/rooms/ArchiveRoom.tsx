@@ -69,13 +69,13 @@ export function ArchiveRoom() {
         skyColor="#EAD9B0"
       />
 
-      {/* ─── Daylight pouring from the sun's corner of the skylight ─── */}
-      <pointLight color={0xF7C842} intensity={2.6} distance={16} position={[-4.5, 5.2, -3.6]} />
-      <pointLight color={0xFFF0C0} intensity={1.0} distance={14} position={[3, 5.2, -3.6]} />
+      {/* ─── Daylight from the sun's deep back-left corner of the skylight ─── */}
+      <pointLight color={0xF7C842} intensity={2.6} distance={16} position={[-5.0, 5.4, -5.0]} />
+      <pointLight color={0xFFF0C0} intensity={1.0} distance={14} position={[2, 5.2, -3.4]} />
       {/* Faint volumetric glow under the sun corner */}
-      <mesh position={[-4.5, 4.4, -3.6]}>
-        <coneGeometry args={[1.2, 3.0, 10, 1, true]} />
-        <meshBasicMaterial color={0xFFE8A0} transparent opacity={0.05} depthWrite={false} side={THREE.BackSide} />
+      <mesh position={[-5.0, 4.8, -5.0]}>
+        <coneGeometry args={[1.0, 2.4, 10, 1, true]} />
+        <meshBasicMaterial color={0xFFE8A0} transparent opacity={0.04} depthWrite={false} side={THREE.BackSide} />
       </mesh>
 
       {/* ─── Warm hanging bulb ─── */}

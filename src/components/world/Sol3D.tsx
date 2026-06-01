@@ -19,7 +19,7 @@ const ROOM_CONFIGS: Array<{
   { pos: [ 2.0,  7.0, -7.6], scale: 1.10 }, // 0 Home    — behind facade, orbits in the sky
   { pos: [-6.5,  4.2, -7.2], scale: 0.70 }, // 1 Musica  — 3/4 in the desk-wall window (left)
   { pos: [ 0.0,  5.4, -7.2], scale: 0.60 }, // 2 Live    — 3/4 in the high back window
-  { pos: [-4.5,  8.6, -3.6], scale: 0.72 }, // 3 Archivio— corner of the giant attic skylight
+  { pos: [-5.0,  8.6, -5.0], scale: 0.58 }, // 3 Archivio— deep back-left corner of the skylight
   { pos: [ 0.0,  5.1, -7.2], scale: 0.62 }, // 4 Merch   — behind the shutter slats
 ]
 
