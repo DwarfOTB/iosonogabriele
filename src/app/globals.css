@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Playfair+Display:wght@400;700&family=Lora&family=Courier+Prime:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital@0;1&family=Courier+Prime:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -6,45 +6,132 @@
   --color-sun-core: #F7C842;
   --color-sun-warm: #F5A623;
   --color-sun-deep: #E07B2A;
+  --color-sun-glow: #FFF0A0;
 
   --color-red-primary: #D93025;
-  --color-red-warm: #C0392B;
-  --color-red-muted: #8B2E22;
+  --color-red-warm:    #C0392B;
+  --color-red-muted:   #8B2E22;
 
-  --color-paper: #F4EDD8;
+  --color-paper:      #F4EDD8;
   --color-paper-warm: #EDE0C4;
   --color-paper-dark: #D9C9A8;
 
-  --color-ink: #1C1208;
-  --color-ink-soft: #3D2E1A;
+  --color-ink:       #1C1208;
+  --color-ink-soft:  #3D2E1A;
   --color-ink-faint: #7A6548;
 
-  --color-wood: #4A3018;
+  --color-wood:       #4A3018;
   --color-wood-light: #6B4C2A;
+
+  --color-white-nat: #FDFAF4;
 
   /* Fonts */
   --font-handwriting: 'Caveat', cursive;
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'Lora', serif;
-  --font-mono: 'Courier Prime', monospace;
+  --font-display:     'Playfair Display', serif;
+  --font-body:        'Lora', serif;
+  --font-mono:        'Courier Prime', monospace;
 }
 
 :root {
   --background: #F4EDD8;
   --foreground: #1C1208;
+
+  /* ── Typography scale (clamp: min, fluid, max) ── */
+  --text-xs:   clamp(0.625rem,  0.5vw  + 0.5rem,  0.75rem);
+  --text-sm:   clamp(0.75rem,   0.6vw  + 0.6rem,  0.875rem);
+  --text-base: clamp(0.875rem,  0.7vw  + 0.7rem,  1rem);
+  --text-md:   clamp(1rem,      0.9vw  + 0.8rem,  1.125rem);
+  --text-lg:   clamp(1.125rem,  1.1vw  + 0.9rem,  1.375rem);
+  --text-xl:   clamp(1.375rem,  1.5vw  + 1rem,    1.75rem);
+  --text-2xl:  clamp(1.75rem,   2vw    + 1.2rem,  2.5rem);
+  --text-3xl:  clamp(2.5rem,    3vw    + 1.5rem,  4rem);
+
+  /* ── Spacing scale (4px base grid) ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Easing ── */
+  --ease-out-expo:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo:    cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out:     cubic-bezier(0.45, 0, 0.55, 1);
+  --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Transitions ── */
+  --transition-fast:   120ms var(--ease-out-expo);
+  --transition-base:   220ms var(--ease-out-expo);
+  --transition-slow:   380ms var(--ease-out-expo);
+
+  /* ── Shadows ── */
+  --shadow-sm:   0 1px 3px rgba(28,18,8,0.12), 0 1px 2px rgba(28,18,8,0.08);
+  --shadow-md:   0 4px 12px rgba(28,18,8,0.15), 0 2px 6px rgba(28,18,8,0.10);
+  --shadow-lg:   0 12px 32px rgba(28,18,8,0.18), 0 6px 16px rgba(28,18,8,0.12);
+  --shadow-xl:   0 24px 56px rgba(28,18,8,0.22), 0 12px 24px rgba(28,18,8,0.14);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Focus ring system ── */
+:focus-visible {
+  outline: 2px solid var(--color-sun-core);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ── Keyframes ── */
 @keyframes panelIn {
-  from { transform: translateY(20px) scale(0.96); opacity: 0; }
-  to   { transform: translateY(0) scale(1);       opacity: 1; }
+  from { transform: translateY(16px) scale(0.97); opacity: 0; }
+  to   { transform: translateY(0) scale(1);        opacity: 1; }
 }
 
+@keyframes panelOut {
+  from { transform: translateY(0) scale(1);        opacity: 1; }
+  to   { transform: translateY(16px) scale(0.97);  opacity: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes solRise {
+  from { transform: translateY(60px); opacity: 0.2; }
+  to   { transform: translateY(0);    opacity: 1;   }
+}
+
+@keyframes dotPulse {
+  0%, 100% { box-shadow: 0 0 6px  rgba(247,200,66,0.4); }
+  50%       { box-shadow: 0 0 16px rgba(247,200,66,0.85); }
+}
+
+@keyframes swarmin {
+  from { transform: translate(var(--ox, 0px), var(--oy, 0px)) scale(0.3); opacity: 0; }
+  to   { transform: translate(0, 0) scale(1); opacity: 1; }
+}
+
+@keyframes swarmout {
+  from { transform: translate(0, 0) scale(1); opacity: 1; }
+  to   { transform: translate(var(--ox, 0px), var(--oy, 0px)) scale(0.3); opacity: 0; }
+}
+
+/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

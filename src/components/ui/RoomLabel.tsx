@@ -4,7 +4,7 @@ import { ROOMS } from '@/data/rooms'
 
 export default function RoomLabel() {
   const currentRoom = useWorldStore((s) => s.currentRoom)
-  const isTransitioning = useWorldStore((s) => s.isTransitioning)
+  const isTransitioning = useWorldStore((s) => s.transitionPhase !== 'idle')
   const room = ROOMS[currentRoom]
 
   return (

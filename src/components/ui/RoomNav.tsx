@@ -1,5 +1,6 @@
 'use client'
-import { useWorldStore, TOTAL_ROOMS } from '@/store/worldStore'
+import { useWorldStore } from '@/store/worldStore'
+import { TOTAL_ROOMS } from '@/data/rooms'
 
 export default function RoomNav() {
   const currentRoom = useWorldStore((s) => s.currentRoom)
