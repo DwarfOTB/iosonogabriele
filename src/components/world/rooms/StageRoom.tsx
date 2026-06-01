@@ -50,7 +50,7 @@ export function StageRoom() {
 
       {/* ─── Floor (dark, extends toward camera) ─── */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 2]} material={floorMat}>
-        <planeGeometry args={[20, 20]} />
+        <planeGeometry args={[60, 44]} />
       </mesh>
 
       {/* ─── Back wall (dark) — segmented around a high window ─── */}

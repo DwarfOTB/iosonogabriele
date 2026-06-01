@@ -9,6 +9,7 @@ import BottomBar from '@/components/ui/BottomBar'
 import RoomNav from '@/components/ui/RoomNav'
 import RoomLabel from '@/components/ui/RoomLabel'
 import KeyboardHint from '@/components/ui/KeyboardHint'
+import SwipeHint from '@/components/ui/SwipeHint'
 import { ContentPanel } from '@/components/ui/ContentPanel'
 import { Scenografi }  from '@/components/ui/Scenografi'
 import { SolLoader } from '@/components/ui/SolLoader'
@@ -36,23 +37,15 @@ export default function Home() {
       } as React.CSSProperties}
     >
       <World />
-      {/* Theater vignette — darkens viewport edges, hides room-structure seams */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'radial-gradient(ellipse 72% 68% at 50% 54%, transparent 42%, rgba(13,9,5,0.55) 72%, rgba(13,9,5,0.92) 100%)',
-          pointerEvents: 'none',
-          zIndex: 2,
-        }}
-      />
+      {/* Theater vignette — frames the scene, hides edges (responsive) */}
+      <div aria-hidden="true" className="sceneVignette" />
       <Scenografi />
       <Navbar />
       <BottomBar />
       <RoomNav />
       <RoomLabel />
       <KeyboardHint />
+      <SwipeHint />
       <ContentPanel />
       {mounted && !loaded && <SolLoader onDone={handleLoaderDone} />}
     </div>

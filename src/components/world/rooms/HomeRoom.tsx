@@ -44,7 +44,7 @@ export function HomeRoom() {
 
       {/* ─── Ground plane (grass) ─── */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 2]}>
-        <planeGeometry args={[30, 22]} />
+        <planeGeometry args={[60, 44]} />
         <meshStandardMaterial color={0x5D8A3C} roughness={0.92} metalness={0} />
       </mesh>
 

@@ -133,6 +133,23 @@ body {
   to   { transform: translate(var(--ox, 0px), var(--oy, 0px)) scale(0.3); opacity: 0; }
 }
 
+/* ── Theatrical vignette (frames the scene, hides edge seams) ── */
+.sceneVignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(ellipse 72% 68% at 50% 54%,
+    transparent 42%, rgba(13, 9, 5, 0.55) 72%, rgba(13, 9, 5, 0.92) 100%);
+}
+/* Mobile: wider/shorter ellipse masks the empty top/bottom letterbox bands */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .sceneVignette {
+    background: radial-gradient(ellipse 100% 56% at 50% 46%,
+      transparent 36%, rgba(13, 9, 5, 0.62) 68%, rgba(13, 9, 5, 0.97) 100%);
+  }
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

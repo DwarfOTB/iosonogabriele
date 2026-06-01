@@ -19,14 +19,17 @@ export interface RoomFrame {
 export const CAM_Y = 1.6
 export const LOOK_Y = 1.6
 export const LOOK_Z = 0
-const FOV_MAX = 76
+const FOV_MAX = 78
+// Portrait fill bias: <1 zooms in a touch so narrow screens aren't mostly
+// empty (trims only the non-essential outer edges). 1 = strict contain.
+const FILL = 0.86
 
 export const ROOM_FRAMES: RoomFrame[] = [
-  { camZ: 6.6, fov: 57, halfW: 8.5, contentZ: -2.5 }, // 0 Home
-  { camZ: 6.6, fov: 57, halfW: 7.8, contentZ: -2.5 }, // 1 Music
-  { camZ: 6.6, fov: 57, halfW: 7.8, contentZ: -3.0 }, // 2 Live
-  { camZ: 6.6, fov: 57, halfW: 6.8, contentZ: -3.5 }, // 3 Archive
-  { camZ: 6.6, fov: 57, halfW: 7.0, contentZ: -2.8 }, // 4 Merch
+  { camZ: 6.6, fov: 57, halfW: 7.4, contentZ: -2.5 }, // 0 Home
+  { camZ: 6.6, fov: 57, halfW: 6.8, contentZ: -2.5 }, // 1 Music
+  { camZ: 6.6, fov: 57, halfW: 7.0, contentZ: -3.0 }, // 2 Live
+  { camZ: 6.6, fov: 57, halfW: 6.2, contentZ: -3.5 }, // 3 Archive
+  { camZ: 6.6, fov: 57, halfW: 6.2, contentZ: -2.8 }, // 4 Merch
 ]
 
 export interface CameraFit {
@@ -46,7 +49,7 @@ export function computeFit(room: number, aspect: number): CameraFit {
   const D = f.camZ - f.contentZ
   const baseHalfH = Math.tan(d2r(f.fov) / 2) * D
   // Vertical half-extent needed so the world half-width fits horizontally.
-  const reqHalfH = Math.max(baseHalfH, f.halfW / Math.max(aspect, 0.0001))
+  const reqHalfH = Math.max(baseHalfH, (f.halfW * FILL) / Math.max(aspect, 0.0001))
 
   let fov = r2d(2 * Math.atan(reqHalfH / D))
   let camZ = f.camZ

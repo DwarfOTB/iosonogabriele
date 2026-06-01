@@ -22,16 +22,16 @@ export interface StageBoxProps {
 // No side walls. A wide back wall + generous floor + ceiling fill the whole
 // frame so the camera never sees "outside" the set (square liminal space).
 const BACK_Z   = -5.5
-const BACK_W   = 30
-const BACK_H   = 14
-const WALL_CY  = 4          // back wall vertical center → spans y -3..11
+const BACK_W   = 60         // oversized so the wide mobile frustum never bleeds
+const BACK_H   = 26
+const WALL_CY  = 6          // back wall vertical center → spans y -7..19
 const X_MIN    = -BACK_W / 2
 const X_MAX    =  BACK_W / 2
-const Y_MIN    = WALL_CY - BACK_H / 2  // -3
-const Y_MAX    = WALL_CY + BACK_H / 2  // 11
-const FLOOR_W  = 30
-const FLOOR_D  = 24
-const FLOOR_CZ = 2          // floor/ceiling spans z -10..14 (covers camera)
+const Y_MIN    = WALL_CY - BACK_H / 2
+const Y_MAX    = WALL_CY + BACK_H / 2
+const FLOOR_W  = 60
+const FLOOR_D  = 44         // floor/ceiling span z -20..24 (covers camera far back)
+const FLOOR_CZ = 2
 
 export function StageBox({
   wallColor,
