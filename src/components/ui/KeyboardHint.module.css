@@ -1,0 +1,16 @@
+/* ─── KeyboardHint.module.css ───────────────────────────────────────── */
+
+.hint {
+  position: fixed;
+  bottom: 88px;
+  right: var(--space-6);
+  z-index: 50;
+  font-family: var(--font-mono, 'Courier Prime', monospace);
+  font-size: var(--text-xs);
+  color: rgba(244, 237, 216, 0.28);
+  letter-spacing: 0.06em;
+  pointer-events: none;
+  user-select: none;
+  text-align: right;
+  line-height: 1.6;
+}

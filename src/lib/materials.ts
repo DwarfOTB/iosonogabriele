@@ -28,6 +28,18 @@ export function toonMaterial(
   })
 }
 
+export function pbrMaterial(
+  color: THREE.ColorRepresentation,
+  opts: Partial<THREE.MeshStandardMaterialParameters> = {}
+): THREE.MeshStandardMaterial {
+  return new THREE.MeshStandardMaterial({
+    color,
+    roughness: 0.88,
+    metalness: 0,
+    ...opts,
+  })
+}
+
 export function outlineMaterial(
   color: THREE.ColorRepresentation = 0x1c1208,
   thickness: number = 0.03

@@ -1,0 +1,114 @@
+/* ─── ContentPanel.module.css ───────────────────────────────────────── */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+/* Backdrop blur */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 18, 8, 0.70);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  cursor: pointer;
+}
+
+/* Panel card */
+.panel {
+  position: relative;
+  background: var(--color-paper);
+  /* Intentional asymmetric radii */
+  border-radius: 3px 8px 4px 6px / 6px 3px 8px 4px;
+  /* Premium layered shadow — NOT flat offset */
+  box-shadow:
+    0  6px 20px  rgba(28, 18, 8, 0.28),
+    0 20px 50px  rgba(28, 18, 8, 0.22),
+    0 40px 80px  rgba(28, 18, 8, 0.14);
+  width: 100%;
+  max-width: min(580px, 93vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: panelIn 340ms var(--ease-out-expo) both;
+
+  /* Styled scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-paper-dark) transparent;
+}
+
+.panel::-webkit-scrollbar       { width: 5px; }
+.panel::-webkit-scrollbar-track { background: transparent; }
+.panel::-webkit-scrollbar-thumb { background: var(--color-paper-dark); border-radius: 3px; }
+
+/* Header bar */
+.header {
+  background: var(--color-ink);
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  /* Paper texture suggestion on header */
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.title {
+  font-family: var(--font-handwriting, 'Caveat', cursive);
+  font-weight: 700;
+  font-size: var(--text-xl);
+  color: var(--color-sun-core);
+  transform: rotate(-0.4deg);
+  display: block;
+  letter-spacing: -0.01em;
+}
+
+/* Close button */
+.close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid rgba(244, 237, 216, 0.28);
+  color: var(--color-white-nat);
+  font-family: var(--font-handwriting, 'Caveat', cursive);
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+  transition:
+    background   var(--transition-base),
+    border-color var(--transition-base),
+    transform    var(--transition-fast);
+}
+
+.close:hover {
+  background: rgba(244, 237, 216, 0.12);
+  border-color: rgba(244, 237, 216, 0.55);
+}
+.close:active  { transform: scale(0.88); }
+.close:focus-visible {
+  outline: 2px solid var(--color-sun-core);
+  outline-offset: 3px;
+}
+
+/* Body */
+.body {
+  padding: var(--space-8) var(--space-8) var(--space-10);
+}
+
+/* ── Exit animation (applied by JS) ── */
+@keyframes panelOut {
+  from { transform: translateY(0) scale(1);       opacity: 1; }
+  to   { transform: translateY(20px) scale(0.97); opacity: 0; }
+}

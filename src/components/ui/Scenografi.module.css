@@ -1,0 +1,135 @@
+/* ─── Scenografi.module.css ──────────────────────────────────────────────
+   Stagehands run in horizontally, dismantle the set pixel-by-pixel and haul
+   it off; fresh crews run the next room's pixels in and drop them in place.
+   block + worker animate separately but share --tx (the side they use).
+──────────────────────────────────────────────────────────────────────── */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+  background: rgba(20, 13, 6, 0.60);
+  animation: backdropFade 130ms ease-out both;
+}
+
+.stage { position: absolute; inset: 0; }
+
+/* Zero-size anchor at the grid slot; children center on it */
+.piece {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.blockWrap,
+.workerWrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform, opacity;
+}
+
+/* ── Pixel block (a piece of the set) ── */
+.block {
+  display: block;
+  width: var(--block, 12px);
+  height: var(--block, 12px);
+  background: var(--block-color, #F7C842);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* ── Stylized worker: glyph + pseudo limbs, walking/running ── */
+.omino {
+  position: relative;
+  display: inline-block;
+  color: var(--color-sun-core, #F7C842);
+  animation: run 300ms steps(2, end) infinite;
+}
+.omino::before {   /* arms */
+  content: '';
+  position: absolute;
+  top: 42%;
+  left: -28%;
+  width: 156%;
+  height: 9%;
+  background: currentColor;
+  border-radius: 2px;
+}
+.omino::after {    /* legs */
+  content: '';
+  position: absolute;
+  bottom: -34%;
+  left: 50%;
+  width: 52%;
+  height: 34%;
+  transform: translateX(-50%);
+  border-left: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+}
+
+/* ── Phase animations (740ms, fits the 900ms store phase + stagger) ── */
+.wkOut  { animation: wkDismantle 740ms cubic-bezier(0.4, 0, 0.2, 1) both; animation-delay: var(--delay, 0ms); }
+.wkIn   { animation: wkAssemble  740ms cubic-bezier(0.4, 0, 0.2, 1) both; animation-delay: var(--delay, 0ms); }
+.blkOut { animation: blkDismantle 740ms cubic-bezier(0.4, 0, 0.2, 1) both; animation-delay: var(--delay, 0ms); }
+.blkIn  { animation: blkAssemble  740ms cubic-bezier(0.4, 0, 0.2, 1) both; animation-delay: var(--delay, 0ms); }
+
+/* Worker: run in → tug loose → run out (same side) */
+@keyframes wkDismantle {
+  0%   { transform: translate(calc(-50% + var(--tx)), -50%); opacity: 0; }
+  6%   { opacity: 1; }
+  38%  { transform: translate(-50%, -50%); }
+  44%  { transform: translate(-46%, -50%) rotate(-9deg); }  /* tug */
+  50%  { transform: translate(-54%, -50%) rotate(7deg); }
+  56%  { transform: translate(-50%, -50%); }
+  92%  { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--tx)), -50%); opacity: 0; }
+}
+
+/* Worker: run in carrying → drop → run out empty (same side) */
+@keyframes wkAssemble {
+  0%   { transform: translate(calc(-50% + var(--tx)), -50%); opacity: 0; }
+  8%   { opacity: 1; }
+  55%  { transform: translate(-50%, -50%); }
+  62%  { transform: translate(-50%, -50%) rotate(7deg); }    /* set down */
+  68%  { transform: translate(-50%, -50%); }
+  92%  { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--tx)), -50%); opacity: 0; }
+}
+
+/* Block sits in the set, gets lifted, then hauled out with the worker */
+@keyframes blkDismantle {
+  0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50%  { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  56%  { transform: translate(-50%, -64%) scale(0.82); opacity: 1; }  /* dismantled */
+  100% { transform: translate(calc(-50% + var(--tx)), -56%) scale(0.6); opacity: 0; }
+}
+
+/* Block carried in, dropped into the grid slot, stays as the new set */
+@keyframes blkAssemble {
+  0%   { transform: translate(calc(-50% + var(--tx)), -56%) scale(0.6); opacity: 0; }
+  8%   { opacity: 1; }
+  55%  { transform: translate(-50%, -64%) scale(0.85); opacity: 1; }  /* over the slot */
+  64%  { transform: translate(-50%, -50%) scale(1); opacity: 1; }      /* dropped */
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+/* Running gait — limbs swing, body bobs + leans */
+@keyframes run {
+  0%   { transform: translateY(0)    rotate(-6deg); }
+  50%  { transform: translateY(-14%) rotate(6deg); }
+  100% { transform: translateY(0)    rotate(-6deg); }
+}
+
+@keyframes backdropFade { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Reduced motion: quick flash, no workers ── */
+@media (prefers-reduced-motion: reduce) {
+  .backdrop { animation: flashBackdrop 220ms ease both; }
+  .piece    { display: none; }
+}
+@keyframes flashBackdrop {
+  0%   { opacity: 0; }
+  40%  { opacity: 1; }
+  100% { opacity: 0; }
+}

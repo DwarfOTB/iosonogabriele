@@ -1,0 +1,51 @@
+/* ─── Input.module.css ──────────────────────────────────────────────── */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-family: var(--font-mono, 'Courier Prime', monospace);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-ink-faint);
+}
+
+.input {
+  font-family: var(--font-body, 'Lora', serif);
+  font-size: var(--text-base);
+  color: var(--color-ink);
+  background: var(--color-white-nat);
+  border: 1.5px solid var(--color-paper-dark);
+  border-radius: 2px 3px 2px 3px / 3px 2px 3px 2px;
+  padding: var(--space-3) var(--space-4);
+  width: 100%;
+  outline: none;
+  transition:
+    border-color var(--transition-base),
+    box-shadow   var(--transition-base);
+}
+
+.input::placeholder { color: var(--color-ink-faint); }
+
+.input:focus-visible,
+.input:focus {
+  border-color: var(--color-sun-core);
+  box-shadow: 0 0 0 3px rgba(247,200,66,0.20);
+  outline: none;
+}
+
+.input.error {
+  border-color: var(--color-red-primary);
+  box-shadow: 0 0 0 3px rgba(217,48,37,0.15);
+}
+
+.errorMsg {
+  font-family: var(--font-mono, 'Courier Prime', monospace);
+  font-size: var(--text-xs);
+  color: var(--color-red-primary);
+  margin-top: 2px;
+}

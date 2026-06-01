@@ -38,8 +38,8 @@ export const useWorldStore = create<WorldState>((set, get) => ({
       set({ currentRoom: clamped, transitionPhase: 'assembling' })
       setTimeout(() => {
         set({ transitionPhase: 'idle' })
-      }, 400)
-    }, 400)
+      }, 900)
+    }, 900)
   },
 
   nextRoom: () => get().setRoom(get().currentRoom + 1),

@@ -1,0 +1,48 @@
+/* ─── Card.module.css ───────────────────────────────────────────────── */
+
+.card {
+  background: var(--color-paper);
+  border-radius: 3px 5px 4px 3px / 4px 3px 5px 3px;
+  /* Layered soft shadow — warm, not hard black */
+  box-shadow:
+    0 2px 6px  rgba(28, 18, 8, 0.10),
+    0 8px 24px rgba(28, 18, 8, 0.08),
+    0 0 0 1px rgba(28, 18, 8, 0.04) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Subtle paper noise texture via pseudo-element ── */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* SVG noise: very subtle grain */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.5;
+  z-index: 0;
+}
+
+.card > * { position: relative; z-index: 1; }
+
+/* ── Variants ── */
+.elevated {
+  box-shadow:
+    0 4px 12px rgba(28, 18, 8, 0.14),
+    0 16px 40px rgba(28, 18, 8, 0.10),
+    0 0 0 1px rgba(28, 18, 8, 0.05) inset;
+}
+
+.flat {
+  box-shadow: 0 0 0 1.5px var(--color-paper-dark);
+}
+
+.dark {
+  background: var(--color-ink-soft);
+  color: var(--color-white-nat);
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.35),
+    0 0 0 1px rgba(255,255,255,0.05) inset;
+}

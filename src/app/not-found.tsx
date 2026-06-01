@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Button } from '@/components/ui/primitives/Button'
 
 const RAY_DEGS = [0,30,60,90,120,150,180,210,240,270,300,330]
 const RAY_LENS = [30,26,29,27,31,25,28,26,30,27,29,26]
@@ -51,12 +51,13 @@ export default function NotFound() {
       </svg>
 
       <h1 style={{
-        fontFamily: "'Caveat', cursive",
+        fontFamily: "'Playfair Display', serif",
         fontWeight: 700,
-        fontSize: 'clamp(1.6rem, 5vw, 2.4rem)',
+        fontSize: 'clamp(1.6rem, 5vw, 2.6rem)',
         color: '#1C1208',
-        marginBottom: '12px',
-        transform: 'rotate(-0.4deg)',
+        marginBottom: '8px',
+        lineHeight: 1.2,
+        letterSpacing: '-0.01em',
       }}>
         Questa stanza non esiste ancora.
       </h1>
@@ -65,31 +66,16 @@ export default function NotFound() {
         fontFamily: "'Lora', serif",
         fontSize: '1rem',
         color: '#7A6548',
-        marginBottom: '32px',
+        marginBottom: '36px',
         maxWidth: '340px',
+        lineHeight: 1.6,
       }}>
         Forse ti sei perso nel buio.
       </p>
 
-      <Link
-        href="/"
-        aria-label="Torna alla home di iosonogabriele"
-        style={{
-          fontFamily: "'Caveat', cursive",
-          fontWeight: 700,
-          fontSize: '1.2rem',
-          color: '#FDFAF4',
-          background: '#D93025',
-          textDecoration: 'none',
-          padding: '12px 32px',
-          borderRadius: '2px 6px 4px 8px / 6px 2px 8px 4px',
-          boxShadow: '3px 3px 0px #C0392B, 6px 6px 0px rgba(28,18,8,0.15)',
-          display: 'inline-block',
-          transform: 'rotate(-0.5deg)',
-        }}
-      >
+      <Button href="/" variant="primary" size="lg" aria-label="Torna alla home di iosonogabriele">
         Torna alla luce →
-      </Link>
+      </Button>
     </div>
   )
 }

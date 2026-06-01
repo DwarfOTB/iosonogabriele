@@ -1,15 +1,15 @@
 'use client'
 import { useCallback, useMemo } from 'react'
 import type { ThreeEvent } from '@react-three/fiber'
+import * as THREE from 'three'
 import { createGradientMap } from '@/lib/materials'
 import { useWorldStore } from '@/store/worldStore'
 
-const Z = -36
-
-const SPOTS: Array<{ x: number; color: number; coneR: number; intensity: number }> = [
-  { x: -4, color: 0xF5A623, coneR: 1.1, intensity: 1.2 },
-  { x:  0, color: 0xF7C842, coneR: 0.9, intensity: 2.0 }, // Il Sole come faro
-  { x:  4, color: 0xD93025, coneR: 1.1, intensity: 1.2 },
+// Spotlights: x, color, intensity — center one is Il Sole
+const SPOTS = [
+  { x: -4,  color: 0xF5A623, int: 1.8, coneH: 9, coneR: 1.2 },
+  { x:  0,  color: 0xF7C842, int: 3.5, coneH: 9, coneR: 0.9 }, // Il Sole
+  { x:  4,  color: 0xD93025, int: 1.8, coneH: 9, coneR: 1.2 },
 ]
 
 export function StageRoom() {
@@ -21,95 +21,185 @@ export function StageRoom() {
   const onOutDates   = useCallback(() => { document.body.style.cursor = 'default';  setHovered(null) }, [setHovered])
   const onClickDates = useCallback((e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); openPanel('dates') }, [openPanel])
 
+  const floorMat = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: 0x1a1208, roughness: 0.85, metalness: 0 }),
+    []
+  )
+  const stageMat = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: 0x3D2510, roughness: 0.80, metalness: 0 }),
+    []
+  )
+  const darkWallMat = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: 0x0d0905, roughness: 0.98, metalness: 0 }),
+    []
+  )
+  const frameMat = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: 0x1a1208, roughness: 0.7, metalness: 0.1 }),
+    []
+  )
+  const glassMat = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: 0x88AACC, transparent: true, opacity: 0.18, roughness: 0.05, metalness: 0.1 }),
+    []
+  )
+
   return (
     <group>
-      {/* Dark background wall */}
-      <mesh position={[0, 7, Z - 8]}>
-        <boxGeometry args={[24, 14, 0.5]} />
-        <meshBasicMaterial color={0x0d0905} />
+      {/* ─── Very dark ambient ─── */}
+      <ambientLight color={0x0d0905} intensity={0.25} />
+
+      {/* ─── Floor (dark, extends toward camera) ─── */}
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 2]} material={floorMat}>
+        <planeGeometry args={[20, 20]} />
       </mesh>
 
-      {/* Ceiling (dark) */}
-      <mesh position={[0, 14, Z - 4]}>
-        <boxGeometry args={[20, 0.3, 12]} />
-        <meshToonMaterial color={0x111008} gradientMap={gm} />
+      {/* ─── Back wall (dark) — segmented around a high window ─── */}
+      {/* Window opening centred at (0,5), 3 wide × 2.2 tall. Sun (Sol3D) floats behind. */}
+      <mesh position={[-4.75, 4, -5.5]} material={darkWallMat}>
+        <planeGeometry args={[6.5, 8]} />
+      </mesh>
+      <mesh position={[4.75, 4, -5.5]} material={darkWallMat}>
+        <planeGeometry args={[6.5, 8]} />
+      </mesh>
+      <mesh position={[0, 7.05, -5.5]} material={darkWallMat}>
+        <planeGeometry args={[3, 1.9]} />
+      </mesh>
+      <mesh position={[0, 1.95, -5.5]} material={darkWallMat}>
+        <planeGeometry args={[3, 3.9]} />
       </mesh>
 
-      {/* Stage platform */}
-      <mesh castShadow receiveShadow position={[0, 0.4, Z - 1]}>
-        <boxGeometry args={[14, 0.8, 8]} />
-        <meshToonMaterial color={0x6B4C2A} gradientMap={gm} />
+      {/* Window dressing — sun glows through from behind */}
+      <group position={[0, 5, -5.5]}>
+        {/* Dusk sky glow behind the sun */}
+        <mesh position={[0, 0, -2.4]}>
+          <planeGeometry args={[3.6, 2.8]} />
+          <meshBasicMaterial color={0x4A2E5A} />
+        </mesh>
+        {/* Glass */}
+        <mesh position={[0, 0, 0.03]} material={glassMat}>
+          <planeGeometry args={[3, 2.2]} />
+        </mesh>
+        {/* Frame */}
+        <mesh position={[0, 1.1, 0.06]} material={frameMat}><boxGeometry args={[3.3, 0.16, 0.16]} /></mesh>
+        <mesh position={[0, -1.1, 0.06]} material={frameMat}><boxGeometry args={[3.3, 0.16, 0.16]} /></mesh>
+        <mesh position={[-1.5, 0, 0.06]} material={frameMat}><boxGeometry args={[0.16, 2.36, 0.16]} /></mesh>
+        <mesh position={[1.5, 0, 0.06]} material={frameMat}><boxGeometry args={[0.16, 2.36, 0.16]} /></mesh>
+        <mesh position={[0, 0, 0.05]} material={frameMat}><boxGeometry args={[0.08, 2.2, 0.12]} /></mesh>
+      </group>
+
+      {/* ─── Stage platform ─── */}
+      <mesh castShadow receiveShadow position={[0, 0.4, -3.2]} material={stageMat}>
+        <boxGeometry args={[12, 0.8, 4.5]} />
+      </mesh>
+      {/* Stage front edge (lighter planks) */}
+      <mesh position={[0, 0.82, -1.0]} material={stageMat}>
+        <boxGeometry args={[12, 0.04, 0.12]} />
       </mesh>
 
+      {/* ─── Curtains (deep red) — lowered to stay in frame at z=6.6 ─── */}
       {/* Left curtain */}
-      <mesh position={[-7.5, 5, Z - 4]}>
-        <boxGeometry args={[2, 10, 0.3]} />
-        <meshToonMaterial color={0xC0392B} gradientMap={gm} />
+      <mesh castShadow position={[-6.5, 3.1, -3.0]}>
+        <boxGeometry args={[2.2, 6.4, 0.2]} />
+        <meshToonMaterial color={0x8B1A14} gradientMap={gm} />
       </mesh>
       {/* Right curtain */}
-      <mesh position={[7.5, 5, Z - 4]}>
-        <boxGeometry args={[2, 10, 0.3]} />
-        <meshToonMaterial color={0xC0392B} gradientMap={gm} />
+      <mesh castShadow position={[6.5, 3.1, -3.0]}>
+        <boxGeometry args={[2.2, 6.4, 0.2]} />
+        <meshToonMaterial color={0x8B1A14} gradientMap={gm} />
+      </mesh>
+      {/* Curtain valance top */}
+      <mesh position={[0, 6.5, -3.0]}>
+        <boxGeometry args={[15, 0.8, 0.3]} />
+        <meshToonMaterial color={0x6B0F0A} gradientMap={gm} />
       </mesh>
 
-      {/* Spot beams — coni puntati verso il basso */}
-      {SPOTS.map(({ x, color, coneR, intensity }, i) => (
-        <group key={i} position={[x, 12, Z + 2]}>
-          <mesh rotation={[Math.PI, 0, 0]}>
-            <coneGeometry args={[coneR, 9, 8]} />
-            <meshBasicMaterial color={color} transparent opacity={0.13} depthWrite={false} />
+      {/* ─── Spot rigs from ceiling ─── */}
+      {SPOTS.map(({ x, color, int: intensity, coneH, coneR }, i) => (
+        <group key={i} position={[x, 7.5, -3.0]}>
+          {/* Rig housing */}
+          <mesh>
+            <boxGeometry args={[0.3, 0.3, 0.3]} />
+            <meshStandardMaterial color={0x111111} roughness={0.8} metalness={0.5} />
           </mesh>
-          <pointLight color={color} intensity={intensity} distance={14} position={[0, -9, 0]} />
+          {/* Light cone (volumetric feel) */}
+          <mesh position={[0, -coneH / 2 - 0.15, 0]}>
+            <coneGeometry args={[coneR, coneH, 10, 1, true]} />
+            <meshBasicMaterial
+              color={color}
+              transparent
+              opacity={i === 1 ? 0.18 : 0.12}
+              depthWrite={false}
+              side={THREE.BackSide}
+            />
+          </mesh>
+          {/* Actual spot */}
+          <spotLight
+            color={color}
+            intensity={intensity * 40}
+            distance={12}
+            angle={Math.atan(coneR / coneH)}
+            penumbra={0.35}
+            castShadow
+            position={[0, 0, 0]}
+            target-position={[x, 0, -3.0]}
+          />
         </group>
       ))}
 
-      {/* Minimal ambient for dark room */}
-      <pointLight color={0x1a1005} intensity={0.3} position={[0, 6, Z]} distance={20} />
+      {/* ─── Mic stand (Toon — brand) ─── */}
+      <group position={[0, 0.8, -3.2]}>
+        <mesh castShadow>
+          <cylinderGeometry args={[0.04, 0.04, 3.4, 6]} />
+          <meshToonMaterial color={0x777777} gradientMap={gm} />
+        </mesh>
+        {/* Boom arm */}
+        <mesh position={[0.5, 1.5, 0]} rotation={[0, 0, -0.5]}>
+          <cylinderGeometry args={[0.025, 0.025, 0.9, 4]} />
+          <meshToonMaterial color={0x666666} gradientMap={gm} />
+        </mesh>
+        {/* Mic head */}
+        <mesh position={[0.85, 1.8, 0]}>
+          <capsuleGeometry args={[0.14, 0.28, 6, 12]} />
+          <meshToonMaterial color={0x555555} gradientMap={gm} />
+        </mesh>
+        {/* Pop filter */}
+        <mesh position={[0.85, 1.8, 0.25]}>
+          <circleGeometry args={[0.18, 12]} />
+          <meshToonMaterial color={0x888888} gradientMap={gm} />
+        </mesh>
+      </group>
 
-      {/* Mic stand */}
-      <mesh position={[0, 1.75, Z]}>
-        <cylinderGeometry args={[0.04, 0.04, 3.5, 6]} />
-        <meshToonMaterial color={0x555555} gradientMap={gm} />
-      </mesh>
-      {/* Mic head */}
-      <mesh position={[0, 3.6, Z]}>
-        <sphereGeometry args={[0.22, 10, 8]} />
-        <meshToonMaterial color={0x666666} gradientMap={gm} />
-      </mesh>
-      {/* Mic cable */}
-      <mesh position={[0.3, 2, Z]} rotation={[0, 0, 0.15]}>
-        <cylinderGeometry args={[0.015, 0.015, 2.5, 4]} />
-        <meshToonMaterial color={0x333333} gradientMap={gm} />
-      </mesh>
+      {/* ─── Floor monitors (wedges) ─── */}
+      <group position={[-2.5, 0.82, -1.5]} rotation={[-0.4, 0, 0]}>
+        <mesh castShadow>
+          <boxGeometry args={[1.2, 0.45, 0.7]} />
+          <meshToonMaterial color={0x1a1a1a} gradientMap={gm} />
+        </mesh>
+      </group>
+      <group position={[2.5, 0.82, -1.5]} rotation={[-0.4, 0, 0]}>
+        <mesh castShadow>
+          <boxGeometry args={[1.2, 0.45, 0.7]} />
+          <meshToonMaterial color={0x1a1a1a} gradientMap={gm} />
+        </mesh>
+      </group>
 
-      {/* Floor monitors */}
-      <mesh position={[-2.2, 0.6, Z + 1.5]} rotation={[-0.35, 0, 0]}>
-        <boxGeometry args={[1.2, 0.5, 0.8]} />
-        <meshToonMaterial color={0x1a1a1a} gradientMap={gm} />
-      </mesh>
-      <mesh position={[2.2, 0.6, Z + 1.5]} rotation={[-0.35, 0, 0]}>
-        <boxGeometry args={[1.2, 0.5, 0.8]} />
-        <meshToonMaterial color={0x1a1a1a} gradientMap={gm} />
-      </mesh>
-
-      {/* Ticket dispenser (INTERACTIVE → dates) */}
+      {/* ─── Ticket dispenser (interactive → dates) ─── */}
       <group
-        position={[-4, 1.2, Z - 1]}
+        position={[-5, 0.85, -1.5]}
         onPointerOver={onOverDates}
         onPointerOut={onOutDates}
         onClick={onClickDates}
       >
         <mesh castShadow>
-          <boxGeometry args={[1, 0.8, 0.5]} />
+          <boxGeometry args={[0.9, 0.9, 0.5]} />
           <meshToonMaterial color={0xEDE0C4} gradientMap={gm} />
         </mesh>
         {/* Slot */}
-        <mesh position={[0, -0.25, 0.26]}>
-          <boxGeometry args={[0.5, 0.06, 0.02]} />
+        <mesh position={[0, -0.3, 0.27]}>
+          <boxGeometry args={[0.45, 0.05, 0.02]} />
           <meshToonMaterial color={0x1C1208} gradientMap={gm} />
         </mesh>
-        {/* Small label light */}
-        <pointLight color={0xF7C842} intensity={0.4} distance={2} position={[0, 0.5, 0.3]} />
+        {/* Label */}
+        <pointLight color={0xF7C842} intensity={0.6} distance={2} position={[0, 0.6, 0.4]} />
       </group>
     </group>
   )

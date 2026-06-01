@@ -1,0 +1,33 @@
+/* ─── RoomLabel.module.css ──────────────────────────────────────────── */
+
+.label {
+  position: fixed;
+  top: 88px;
+  left: var(--space-10);
+  z-index: 50;
+  pointer-events: none;
+  transition: opacity var(--transition-slow);
+}
+
+.label.hidden { opacity: 0; }
+.label.visible { opacity: 1; }
+
+.counter {
+  font-family: var(--font-mono, 'Courier Prime', monospace);
+  font-size: var(--text-xs);
+  color: rgba(244, 237, 216, 0.45);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-1);
+}
+
+.name {
+  font-family: var(--font-handwriting, 'Caveat', cursive);
+  font-weight: 700;
+  font-size: var(--text-2xl);
+  color: var(--color-white-nat);
+  text-shadow:
+    0 2px 14px rgba(0, 0, 0, 0.80),
+    0 1px  4px rgba(0, 0, 0, 0.60);
+  line-height: 1.05;
+}

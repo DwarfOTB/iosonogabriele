@@ -24,9 +24,11 @@ export interface RoomConfig {
   posterImages: string[] // filenames in public/images/posters/
 }
 
-// Fixed camera — NEVER moves between rooms
+// Fixed camera — NEVER moves between rooms.
+// z=6.6 brings the POV close to the set so interiors don't read as empty.
+// Live curtains/valance lowered slightly in StageRoom to stay in frame. fov 57.
 export const STAGE_CAMERA = {
-  position: [0, 1.6, 9] as [number, number, number],
+  position: [0, 1.6, 6.6] as [number, number, number],
   lookAt:   [0, 1.6, 0] as [number, number, number],
   fov: 57,
 }

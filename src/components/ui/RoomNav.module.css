@@ -1,0 +1,93 @@
+/* ─── RoomNav.module.css ────────────────────────────────────────────── */
+
+.nav {
+  position: fixed;
+  bottom: var(--space-8);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Arrow buttons */
+.arrow {
+  font-family: var(--font-handwriting, 'Caveat', cursive);
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: rgba(244, 237, 216, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(244, 237, 216, 0.25);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-white-nat);
+  transition:
+    opacity      var(--transition-fast),
+    transform    var(--transition-fast),
+    background   var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.arrow:hover:not(:disabled) {
+  background: rgba(244, 237, 216, 0.22);
+  border-color: rgba(244, 237, 216, 0.50);
+}
+
+.arrow:active:not(:disabled) { transform: scale(0.90); }
+
+.arrow:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.arrow:focus-visible {
+  outline: 2px solid var(--color-sun-core);
+  outline-offset: 3px;
+}
+
+/* Dot container */
+.dots {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* Individual dot */
+.dot {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(244, 237, 216, 0.32);
+  cursor: pointer;
+  transition:
+    width      300ms var(--ease-spring),
+    background 300ms var(--ease-out-expo),
+    box-shadow 300ms var(--ease-out-expo);
+  border: none;
+  padding: 0;
+}
+
+.dot.inactive { width: 8px; }
+
+.dot.active {
+  width: 28px;
+  background: var(--accent, var(--color-sun-core));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent, #F7C842) 70%, transparent);
+  animation: dotPulse 3s ease-in-out infinite;
+}
+
+.dot:focus-visible {
+  outline: 2px solid var(--color-sun-core);
+  outline-offset: 3px;
+}
+
+@keyframes dotPulse {
+  0%, 100% { box-shadow: 0 0 6px  color-mix(in srgb, var(--accent, #F7C842) 40%, transparent); }
+  50%       { box-shadow: 0 0 16px color-mix(in srgb, var(--accent, #F7C842) 85%, transparent); }
+}

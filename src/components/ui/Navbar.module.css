@@ -1,0 +1,73 @@
+/* ─── Navbar.module.css ─────────────────────────────────────────────── */
+
+.nav {
+  position: fixed;
+  top: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  gap: var(--space-6);
+  align-items: center;
+  padding: var(--space-3) var(--space-8);
+  /* Paper card feel */
+  background: var(--color-paper);
+  border-radius: 2px 5px 3px 4px / 4px 2px 5px 3px;
+  box-shadow: var(--shadow-lg), 0 1px 0 var(--color-paper-dark);
+  /* Subtle paper texture */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* Press state on nav click */
+.nav:active { transform: translateX(-50%) scale(0.995); }
+
+.btn {
+  font-family: var(--font-handwriting, 'Caveat', cursive);
+  font-size: var(--text-md);
+  font-weight: 400;
+  color: var(--color-ink);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) 0;
+  position: relative;
+  transition:
+    color       var(--transition-base),
+    font-weight var(--transition-fast);
+  /* Underline via pseudo-element for smooth animation */
+  text-decoration: none;
+}
+
+/* Underline reveal on hover */
+.btn::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-red-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-base);
+  border-radius: 1px;
+}
+
+.btn:hover { color: var(--color-red-primary); }
+.btn:hover::after { transform: scaleX(1); }
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-sun-core);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Active room link */
+.active {
+  font-weight: 700;
+  color: var(--accent, var(--color-red-primary));
+}
+.active::after {
+  background: var(--accent, var(--color-red-primary));
+  transform: scaleX(1);
+}

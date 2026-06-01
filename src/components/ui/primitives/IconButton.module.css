@@ -1,0 +1,69 @@
+/* ─── IconButton.module.css ─────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-handwriting, 'Caveat', cursive);
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+  position: relative;
+  transition:
+    transform   var(--transition-fast),
+    box-shadow  var(--transition-fast),
+    background  var(--transition-base),
+    opacity     var(--transition-base);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-sun-core);
+  outline-offset: 3px;
+}
+
+.btn:active { transform: scale(0.92); }
+
+/* ── Shapes ── */
+.circle { border-radius: 50%; }
+.square { border-radius: 3px 5px 4px 3px / 4px 3px 5px 3px; }
+
+/* ── Sizes ── */
+.sm { width: 28px; height: 28px; font-size: 0.85rem; }
+.md { width: 36px; height: 36px; font-size: 1.1rem; }
+.lg { width: 46px; height: 46px; font-size: 1.4rem; }
+
+/* ── Variants ── */
+.light {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-sm);
+}
+.light:hover { box-shadow: var(--shadow-md); }
+
+.dark {
+  background: var(--color-ink);
+  color: var(--color-white-nat);
+  box-shadow: var(--shadow-sm);
+}
+.dark:hover { box-shadow: var(--shadow-md); }
+
+.ghost {
+  background: transparent;
+  color: var(--color-white-nat);
+  box-shadow: 0 0 0 1.5px rgba(244,237,216,0.35);
+}
+.ghost:hover {
+  background: rgba(244,237,216,0.10);
+  box-shadow: 0 0 0 1.5px rgba(244,237,216,0.6);
+}
+
+/* ── Disabled ── */
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+  pointer-events: none;
+}
