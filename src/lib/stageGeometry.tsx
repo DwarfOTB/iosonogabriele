@@ -185,7 +185,7 @@ export function StageBox({
           <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.03, 0]} material={glassMat}>
             <planeGeometry args={[skylight.w, skylight.d]} />
           </mesh>
-          {/* Frame bars */}
+          {/* Outer frame bars */}
           <mesh position={[0, 0.06, skylight.d / 2]} material={frameMat}>
             <boxGeometry args={[skylight.w + 0.3, 0.16, 0.18]} />
           </mesh>
@@ -198,6 +198,23 @@ export function StageBox({
           <mesh position={[skylight.w / 2, 0.06, 0]} material={frameMat}>
             <boxGeometry args={[0.18, 0.16, skylight.d + 0.3]} />
           </mesh>
+          {/* Mullion grid — panes scale with the opening (reads as a roof window) */}
+          {Array.from({ length: Math.max(0, Math.round(skylight.w / 3) - 1) }).map((_, k, arr) => {
+            const x = -skylight.w / 2 + (skylight.w / (arr.length + 1)) * (k + 1)
+            return (
+              <mesh key={`mv-${k}`} position={[x, 0.05, 0]} material={frameMat}>
+                <boxGeometry args={[0.09, 0.12, skylight.d]} />
+              </mesh>
+            )
+          })}
+          {Array.from({ length: Math.max(0, Math.round(skylight.d / 2)) }).map((_, k, arr) => {
+            const z = -skylight.d / 2 + (skylight.d / (arr.length + 1)) * (k + 1)
+            return (
+              <mesh key={`mh-${k}`} position={[0, 0.05, z]} material={frameMat}>
+                <boxGeometry args={[skylight.w, 0.12, 0.09]} />
+              </mesh>
+            )
+          })}
         </group>
       )}
     </group>

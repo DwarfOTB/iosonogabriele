@@ -58,22 +58,24 @@ export function ArchiveRoom() {
 
   return (
     <>
-      {/* ─── Stage shell with attic skylight (sun glimpsed above) ─── */}
+      {/* ─── Giant attic roof skylight (spans the cork board) — sun in a corner ─── */}
+      {/* Pulled forward (z toward camera) so the front edge clears the navbar. */}
       <StageBox
         wallColor={ROOM.wallColor}
         floorColor={ROOM.floorColor}
         ceilingColor={ROOM.ceilingColor}
         hasCeiling={ROOM.hasCeiling}
-        skylight={{ x: 0, z: -4.5, w: 3, d: 2 }}
-        skyColor="#F7D98A"
+        skylight={{ x: 0, z: -3.6, w: 12, d: 4 }}
+        skyColor="#EAD9B0"
       />
 
-      {/* ─── Soft daylight glimpsed through the attic roof skylight ─── */}
-      <pointLight color={0xF7C842} intensity={2.0} distance={12} position={[0, 5.2, -4.5]} />
-      {/* Faint volumetric glow just under the skylight (a glimpse, not a flood) */}
-      <mesh position={[0, 4.6, -4.5]}>
-        <coneGeometry args={[1.0, 2.6, 10, 1, true]} />
-        <meshBasicMaterial color={0xFFE8A0} transparent opacity={0.045} depthWrite={false} side={THREE.BackSide} />
+      {/* ─── Daylight pouring from the sun's corner of the skylight ─── */}
+      <pointLight color={0xF7C842} intensity={2.6} distance={16} position={[-4.5, 5.2, -3.6]} />
+      <pointLight color={0xFFF0C0} intensity={1.0} distance={14} position={[3, 5.2, -3.6]} />
+      {/* Faint volumetric glow under the sun corner */}
+      <mesh position={[-4.5, 4.4, -3.6]}>
+        <coneGeometry args={[1.2, 3.0, 10, 1, true]} />
+        <meshBasicMaterial color={0xFFE8A0} transparent opacity={0.05} depthWrite={false} side={THREE.BackSide} />
       </mesh>
 
       {/* ─── Warm hanging bulb ─── */}
