@@ -11,6 +11,11 @@
   gap: var(--space-4);
 }
 
+/* Mobile: arrows/dots replaced by the bottom bar (swipe still works) */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .nav { display: none; }
+}
+
 /* Arrow buttons */
 .arrow {
   font-family: var(--font-handwriting, 'Caveat', cursive);

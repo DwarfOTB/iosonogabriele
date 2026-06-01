@@ -9,6 +9,15 @@
   transition: opacity var(--transition-slow);
 }
 
+/* Mobile: no top navbar — sit under the safe-area, smaller, no overlap */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .label {
+    top: max(var(--space-4), env(safe-area-inset-top));
+    left: var(--space-4);
+  }
+  .name { font-size: var(--text-xl); }
+}
+
 .label.hidden { opacity: 0; }
 .label.visible { opacity: 1; }
 

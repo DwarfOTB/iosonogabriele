@@ -71,3 +71,8 @@
   background: var(--accent, var(--color-red-primary));
   transform: scaleX(1);
 }
+
+/* Mobile: top navbar replaced by the bottom bar */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .nav { display: none; }
+}

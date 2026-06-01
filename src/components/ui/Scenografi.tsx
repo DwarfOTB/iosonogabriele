@@ -1,6 +1,8 @@
 'use client'
 import type { ReactNode, CSSProperties } from 'react'
+import { useEffect, useState } from 'react'
 import { useWorldStore } from '@/store/worldStore'
+import { computeFit, projectToScreen, projectSize } from '@/lib/projection'
 import s from './Scenografi.module.css'
 
 /* ── Crew strikes & builds the REAL set of each room ──
@@ -178,72 +180,78 @@ function Sign(): ReactNode {
   </div>)
 }
 
-// ── Piece type + factory ────────────────────────────────────────────────
+// ── Piece type ────────────────────────────────────────────────────────────
+// World coordinates of each REAL object; projected to screen at runtime with
+// the same camera fit as the 3D scene → carried pieces land on their objects.
 interface Piece {
   kind: 'fly' | 'carry'
-  x: number; y: number; w: number; h: number
-  tx: string; fy: string
+  wx: number; wy: number; wz: number   // world centre
+  ww: number; wh: number               // world size
   carriers: number; delay: number
   node: ReactNode
 }
-function mk(kind: Piece['kind'], x: number, y: number, w: number, h: number, carriers: number, delay: number, node: ReactNode): Piece {
-  const tx = x < 50 ? '-48vw' : '48vw'
-  return { kind, x, y, w, h, tx, fy: '-135vh', carriers, delay, node }
+function mk(kind: Piece['kind'], wx: number, wy: number, wz: number, ww: number, wh: number, carriers: number, delay: number, node: ReactNode): Piece {
+  return { kind, wx, wy, wz, ww, wh, carriers, delay, node }
 }
 
-// Real objects per room — screen-projected positions/sizes
+// Real objects per room (world coords mirror the 3D room components)
 const ROOM_PIECES: Piece[][] = [
   // 0 — HOME: trees, door, windows
   [
-    mk('carry', 18, 58, 14, 28, 2, 60,  <Tree />),
-    mk('carry', 82, 58, 14, 28, 2, 90,  <Tree />),
-    mk('carry', 50, 56, 11, 26, 2, 0,   <Door />),
-    mk('carry', 35, 44, 12, 18, 1, 120, <Window sun />),
-    mk('carry', 65, 44, 12, 18, 1, 150, <Window />),
+    mk('carry', -6.0, 2.0, -2.5, 3.2, 4.0, 2, 60,  <Tree />),
+    mk('carry',  6.0, 2.0, -2.5, 3.2, 4.0, 2, 90,  <Tree />),
+    mk('carry',  0.0, 1.55, -5.35, 1.65, 3.3, 2, 0, <Door />),
+    mk('carry', -3.5, 3.8, -5.35, 1.8, 2.0, 1, 120, <Window sun />),
+    mk('carry',  3.5, 3.8, -5.35, 1.8, 2.0, 1, 150, <Window />),
   ],
   // 1 — MUSIC: posters(3), vinyl, speakers(2), macbook, desk, plant
   [
-    mk('carry', 35, 37, 9,  15, 1, 0,   <Poster c={RED} />),
-    mk('carry', 50, 37, 9,  15, 1, 40,  <Poster c={INK} />),
-    mk('carry', 65, 37, 9,  15, 1, 70,  <Poster c={SUN} />),
-    mk('carry', 69, 44, 11, 15, 1, 90,  <Vinyl />),
-    mk('carry', 37, 52, 8,  16, 1, 110, <Speaker />),
-    mk('carry', 63, 52, 8,  16, 1, 120, <Speaker />),
-    mk('carry', 50, 53, 15, 12, 2, 60,  <Macbook />),
-    mk('carry', 50, 60, 52, 12, 3, 160, <Desk />),
-    mk('carry', 34, 50, 9,  18, 1, 175, <Plant />),
+    mk('carry', -3.5, 3.3, -5.35, 1.45, 1.95, 1, 0,   <Poster c={RED} />),
+    mk('carry',  0.0, 3.3, -5.35, 1.45, 1.95, 1, 40,  <Poster c={INK} />),
+    mk('carry',  3.5, 3.3, -5.35, 1.45, 1.95, 1, 70,  <Poster c={SUN} />),
+    mk('carry',  4.5, 2.4, -5.35, 1.76, 1.76, 1, 90,  <Vinyl />),
+    mk('carry', -2.4, 1.48, -2.5, 0.95, 1.4, 1, 110,  <Speaker />),
+    mk('carry',  2.4, 1.48, -2.5, 0.95, 1.4, 1, 120,  <Speaker />),
+    mk('carry',  0.0, 1.0, -2.6, 1.9, 1.0, 2, 60,     <Macbook />),
+    mk('carry',  0.0, 0.5, -2.6, 5.2, 1.0, 3, 160,    <Desk />),
+    mk('carry', -3.5, 1.2, -4.8, 1.7, 2.6, 1, 175,    <Plant />),
   ],
   // 2 — LIVE: truss + curtains (fly), stage, mic, wedges, ticket
   [
-    mk('fly',   50, 8,  70, 8,  2, 0,   <Truss />),
-    mk('fly',   15, 36, 11, 60, 2, 40,  <Curtain />),
-    mk('fly',   85, 36, 11, 60, 2, 60,  <Curtain />),
-    mk('carry', 50, 64, 88, 10, 4, 130, <StagePlatform />),
-    mk('carry', 50, 46, 6,  30, 1, 90,  <MicStand />),
-    mk('carry', 34, 59, 10, 7,  1, 150, <Wedge />),
-    mk('carry', 66, 59, 10, 7,  1, 160, <Wedge />),
-    mk('carry', 18, 58, 9,  12, 1, 175, <Ticket />),
+    mk('fly',    0.0, 6.8, -3.0, 13.0, 1.4, 2, 0,   <Truss />),
+    mk('fly',   -6.5, 3.1, -3.0, 2.2, 6.4, 2, 40,   <Curtain />),
+    mk('fly',    6.5, 3.1, -3.0, 2.2, 6.4, 2, 60,   <Curtain />),
+    mk('carry',  0.0, 0.4, -3.2, 12.0, 0.9, 4, 130, <StagePlatform />),
+    mk('carry',  0.0, 1.8, -3.2, 0.4, 3.4, 1, 90,   <MicStand />),
+    mk('carry', -2.5, 0.82, -1.5, 1.3, 0.6, 1, 150, <Wedge />),
+    mk('carry',  2.5, 0.82, -1.5, 1.3, 0.6, 1, 160, <Wedge />),
+    mk('carry', -5.0, 0.85, -1.5, 0.9, 0.9, 1, 175, <Ticket />),
   ],
   // 3 — ARCHIVE: cork board (fly), shelf, cardboard boxes(3), small desk
   [
-    mk('fly',   50, 33, 76, 44, 3, 0,   <CorkBoard />),
-    mk('carry', 35, 50, 34, 8,  2, 120, <Shelf />),
-    mk('carry', 27, 46, 7,  8,  1, 150, <CardboardBox />),
-    mk('carry', 36, 46, 7,  8,  1, 165, <CardboardBox />),
-    mk('carry', 44, 46, 7,  8,  1, 180, <CardboardBox />),
-    mk('carry', 71, 57, 18, 10, 2, 90,  <SmallDesk />),
+    mk('fly',    0.0, 3.8, -5.38, 12.0, 5.5, 3, 0,   <CorkBoard />),
+    mk('carry', -3.0, 1.6, -4.0, 5.5, 0.6, 2, 120,   <Shelf />),
+    mk('carry', -4.7, 1.95, -4.0, 1.45, 0.7, 1, 150, <CardboardBox />),
+    mk('carry', -3.0, 1.95, -4.0, 1.45, 0.7, 1, 165, <CardboardBox />),
+    mk('carry', -1.3, 1.95, -4.0, 1.45, 0.7, 1, 180, <CardboardBox />),
+    mk('carry',  4.5, 0.75, -4.5, 3.5, 0.9, 2, 90,   <SmallDesk />),
   ],
   // 4 — MERCH: sign (fly), shelves(2), products, counter
   [
-    mk('fly',   50, 34, 28, 7,  2, 0,   <Sign />),
-    mk('carry', 26, 40, 14, 9,  1, 60,  <MerchShelf colors={[RED, PAPER, INK]} />),
-    mk('carry', 74, 40, 14, 9,  1, 80,  <MerchShelf colors={[SUN, WOOD2, RED]} />),
-    mk('carry', 50, 50, 30, 10, 2, 150, <Products />),
-    mk('carry', 50, 60, 80, 16, 4, 120, <Counter />),
+    mk('fly',    0.0, 3.6, -5.2, 5.5, 1.1, 2, 0,    <Sign />),
+    mk('carry', -5.5, 2.8, -5.0, 2.5, 1.0, 1, 60,   <MerchShelf colors={[RED, PAPER, INK]} />),
+    mk('carry',  5.5, 2.8, -5.0, 2.5, 1.0, 1, 80,   <MerchShelf colors={[SUN, WOOD2, RED]} />),
+    mk('carry',  0.0, 2.1, -2.8, 7.0, 1.2, 2, 150,  <Products />),
+    mk('carry',  0.0, 0.8, -2.8, 9.5, 1.6, 4, 120,  <Counter />),
   ],
 ]
 
-function PieceEl({ p, dismantle }: { p: Piece; dismantle: boolean }) {
+interface FitCtx { fit: ReturnType<typeof computeFit>; aspect: number }
+
+function PieceEl({ p, dismantle, ctx }: { p: Piece; dismantle: boolean; ctx: FitCtx }) {
+  const pos = projectToScreen(p.wx, p.wy, p.wz, ctx.fit, ctx.aspect)
+  const sz = projectSize(p.ww, p.wh, p.wz, ctx.fit, ctx.aspect)
+  const tx = pos.x < 50 ? '-48vw' : '48vw'
   const anim = p.kind === 'fly'
     ? (dismantle ? s.flyOut : s.flyIn)
     : (dismantle ? s.carryOut : s.carryIn)
@@ -251,8 +259,8 @@ function PieceEl({ p, dismantle }: { p: Piece; dismantle: boolean }) {
     <div
       className={`${s.piece} ${anim}`}
       style={{
-        left: `${p.x}vw`, top: `${p.y}vh`, width: `${p.w}vw`, height: `${p.h}vh`,
-        '--tx': p.tx, '--fy': p.fy, '--delay': `${p.delay}ms`,
+        left: `${pos.x}vw`, top: `${pos.y}vh`, width: `${sz.w}vw`, height: `${sz.h}vh`,
+        '--tx': tx, '--fy': '-135vh', '--delay': `${p.delay}ms`,
       } as CSSProperties}
     >
       <div className={s.flat}>{p.node}</div>
@@ -299,18 +307,31 @@ function RunnerEl({ r }: { r: Runner }) {
   )
 }
 
+function useAspect() {
+  const [aspect, setAspect] = useState(16 / 9)
+  useEffect(() => {
+    const update = () => setAspect(window.innerWidth / window.innerHeight)
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
+  return aspect
+}
+
 export function Scenografi() {
   const phase = useWorldStore((st) => st.transitionPhase)
   const currentRoom = useWorldStore((st) => st.currentRoom)
+  const aspect = useAspect()
   if (phase === 'idle') return null
 
   const dismantle = phase === 'dismantling'
   const pieces = ROOM_PIECES[currentRoom] ?? []
+  const ctx: FitCtx = { fit: computeFit(currentRoom, aspect), aspect }
 
   return (
     <div className={s.backdrop} aria-hidden="true">
       <div key={phase} className={s.stage}>
-        {pieces.map((p, i) => <PieceEl key={i} p={p} dismantle={dismantle} />)}
+        {pieces.map((p, i) => <PieceEl key={i} p={p} dismantle={dismantle} ctx={ctx} />)}
         {RUNNERS.map((r, i) => <RunnerEl key={`r${i}`} r={r} />)}
       </div>
     </div>

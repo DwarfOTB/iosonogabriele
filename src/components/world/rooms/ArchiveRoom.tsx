@@ -4,6 +4,7 @@ import type { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import { StageBox } from '@/lib/stageGeometry'
 import { createGradientMap } from '@/lib/materials'
+import { Hotspot } from '@/components/world/Hotspot'
 import { useWorldStore } from '@/store/worldStore'
 import { ROOMS } from '@/data/rooms'
 
@@ -213,6 +214,11 @@ export function ArchiveRoom() {
           <cylinderGeometry args={[0.05, 0.05, 0.74, 5]} />
           <meshStandardMaterial color={0x4A3018} roughness={0.88} metalness={0} />
         </mesh>
+      ))}
+
+      {/* ─── Touch hotspots (mobile discovery) ─── */}
+      {ARCHIVE_BOXES.map((b) => (
+        <Hotspot key={b.panel} position={[b.x, 2.25, -3.7]} onActivate={() => openPanel(b.panel)} label="Apri archivio" />
       ))}
     </>
   )

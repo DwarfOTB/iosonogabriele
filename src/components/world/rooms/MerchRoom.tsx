@@ -4,6 +4,7 @@ import type { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import { StageBox } from '@/lib/stageGeometry'
 import { createGradientMap } from '@/lib/materials'
+import { Hotspot } from '@/components/world/Hotspot'
 import { useWorldStore } from '@/store/worldStore'
 import { ROOMS } from '@/data/rooms'
 
@@ -163,6 +164,9 @@ export function MerchRoom() {
           <meshToonMaterial color={c} gradientMap={gm} />
         </mesh>
       ))}
+
+      {/* ─── Touch hotspot (mobile discovery) ─── */}
+      <Hotspot position={[0, 2.7, -2.6]} onActivate={() => openPanel('merch')} label="Apri merch" />
     </>
   )
 }

@@ -1,0 +1,75 @@
+/* ─── BottomBar.module.css ───────────────────────────────────────────────
+   Mobile thumb-zone navigation. Shown only on touch / small screens. */
+
+.bar {
+  display: none; /* desktop: hidden (see media query) */
+}
+
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-2);
+    padding-bottom: max(var(--space-2), env(safe-area-inset-bottom));
+    background: var(--color-paper);
+    border-top: 1px solid var(--color-paper-dark);
+    box-shadow: 0 -6px 20px rgba(28, 18, 8, 0.18);
+    /* paper texture */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+}
+
+.tab {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 2px;
+  cursor: pointer;
+  color: var(--color-ink-faint);
+  transition: color var(--transition-base), background var(--transition-base);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.label {
+  font-family: var(--font-handwriting, 'Caveat', cursive);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tab:active { transform: scale(0.94); }
+
+.active {
+  color: var(--accent, var(--color-red-primary));
+  background: color-mix(in srgb, var(--accent, #D93025) 12%, transparent);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--color-sun-core);
+  outline-offset: -2px;
+}

@@ -5,6 +5,7 @@ import { useRoomNavigation } from '@/hooks/useRoomNavigation'
 import { useWorldStore } from '@/store/worldStore'
 import { ROOMS } from '@/data/rooms'
 import Navbar from '@/components/ui/Navbar'
+import BottomBar from '@/components/ui/BottomBar'
 import RoomNav from '@/components/ui/RoomNav'
 import RoomLabel from '@/components/ui/RoomLabel'
 import KeyboardHint from '@/components/ui/KeyboardHint'
@@ -29,7 +30,7 @@ export default function Home() {
       style={{
         position: 'relative',
         width: '100vw',
-        height: '100vh',
+        height: '100svh',
         overflow: 'hidden',
         '--accent': accentColor,
       } as React.CSSProperties}
@@ -48,6 +49,7 @@ export default function Home() {
       />
       <Scenografi />
       <Navbar />
+      <BottomBar />
       <RoomNav />
       <RoomLabel />
       <KeyboardHint />

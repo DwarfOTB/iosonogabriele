@@ -1,0 +1,51 @@
+/* ─── Hotspot.module.css ─────────────────────────────────────────────────
+   Touch-only pulsing marker for interactive 3D objects. */
+
+.wrap {
+  /* drei Html wrapper — keep it from capturing layout */
+  pointer-events: none;
+}
+
+.dot {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--color-ink, #1C1208);
+  background: var(--color-sun-core, #F7C842);
+  color: var(--color-ink, #1C1208);
+  font-family: 'Courier Prime', monospace;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pulse {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid var(--color-sun-core, #F7C842);
+  animation: hotspotPulse 1.8s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes hotspotPulse {
+  0%   { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+/* Desktop (precise pointer + hover) → hide; objects are clicked directly */
+@media (hover: hover) and (pointer: fine) {
+  .wrap { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse { animation: none; opacity: 0.4; }
+}

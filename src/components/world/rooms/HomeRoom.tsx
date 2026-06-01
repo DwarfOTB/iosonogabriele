@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react'
 import type { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import { createGradientMap } from '@/lib/materials'
+import { Hotspot } from '@/components/world/Hotspot'
 import { useWorldStore } from '@/store/worldStore'
 
 
@@ -151,6 +152,9 @@ export function HomeRoom() {
           </mesh>
         ))
       )}
+
+      {/* ─── Touch hotspot (mobile discovery) — enter the studio ─── */}
+      <Hotspot position={[0, 2.4, -5.2]} onActivate={() => setRoom(1)} label="Entra nello studio" />
     </group>
   )
 }

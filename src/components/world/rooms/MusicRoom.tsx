@@ -4,6 +4,7 @@ import type { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import { StageBox } from '@/lib/stageGeometry'
 import { createGradientMap } from '@/lib/materials'
+import { Hotspot } from '@/components/world/Hotspot'
 import { useWorldStore } from '@/store/worldStore'
 import { ROOMS } from '@/data/rooms'
 
@@ -229,6 +230,13 @@ export function MusicRoom() {
         </mesh>
         <pointLight color={0xFFF0A0} intensity={1.5} distance={8} position={[0, -0.5, 0]} />
       </group>
+
+      {/* ─── Touch hotspots (mobile discovery) ─── */}
+      <Hotspot position={[0, 1.75, -2.4]}  onActivate={() => openPanel('tracklist')} label="Apri tracklist" />
+      <Hotspot position={[4.5, 2.4, -5.1]} onActivate={() => openPanel('album')}     label="Ascolta album" />
+      {posters.map(({ x, id }) => (
+        <Hotspot key={id} position={[x, 3.3, -5.1]} onActivate={() => openPanel(id)} label="Apri singolo" />
+      ))}
     </>
   )
 }

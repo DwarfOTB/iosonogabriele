@@ -14,3 +14,8 @@
   text-align: right;
   line-height: 1.6;
 }
+
+/* Touch devices have no keyboard — hide the hint */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .hint { display: none; }
+}

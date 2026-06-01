@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react'
 import type { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import { createGradientMap } from '@/lib/materials'
+import { Hotspot } from '@/components/world/Hotspot'
 import { useWorldStore } from '@/store/worldStore'
 
 // Spotlights: x, color, intensity — center one is Il Sole
@@ -201,6 +202,9 @@ export function StageRoom() {
         {/* Label */}
         <pointLight color={0xF7C842} intensity={0.6} distance={2} position={[0, 0.6, 0.4]} />
       </group>
+
+      {/* ─── Touch hotspot (mobile discovery) ─── */}
+      <Hotspot position={[-5, 1.5, -1.2]} onActivate={() => openPanel('dates')} label="Date del tour" />
     </group>
   )
 }

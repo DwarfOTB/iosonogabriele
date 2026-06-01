@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
 import * as THREE from 'three'
 import { Scene } from './Scene'
-import { CameraRig } from './CameraRig'
+import { ResponsiveCamera } from './ResponsiveCamera'
 import { Sol3D } from './Sol3D'
 import { STAGE_CAMERA, ROOMS } from '@/data/rooms'
 
@@ -41,7 +41,7 @@ export default function World() {
     >
       <Suspense fallback={null}>
         <Scene />
-        <CameraRig />
+        <ResponsiveCamera />
         <Sol3D />
       </Suspense>
     </Canvas>
