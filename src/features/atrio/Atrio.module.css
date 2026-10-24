@@ -1,0 +1,76 @@
+/* L'atrio sopra la stanza 3D: il tocco passa alle porte */
+.atrio {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100svh;
+  padding:
+    max(6px, env(safe-area-inset-top))
+    max(var(--gut), env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(var(--gut), env(safe-area-inset-left));
+  pointer-events: none;
+}
+
+.atrio > * > * {
+  pointer-events: auto;
+}
+
+.testata {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+}
+
+.firma {
+  margin: 0;
+  font-family: var(--f-soft);
+  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 18;
+  font-weight: 500;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+/* Le frecce servono solo quando si vede una porta alla volta (vedi Regia) */
+.giro {
+  grid-row: 3;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+@media (max-aspect-ratio: 23 / 20) {
+  .giro {
+    display: flex;
+  }
+}
+
+.punti {
+  display: flex;
+  gap: 7px;
+}
+
+.punti i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--ink-soft);
+}
+
+.punti i[data-qui] {
+  background: var(--ink);
+  box-shadow: none;
+}
+
+.nascosto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

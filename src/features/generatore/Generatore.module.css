@@ -1,0 +1,369 @@
+/* SONO ___. — carta bianca, il titolo enorme, sotto la parola da scrivere */
+
+.radice[data-inapp] {
+  --striscia: 40px;
+}
+
+.pagina {
+  display: grid;
+  height: 100svh;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding:
+    calc(max(14px, env(safe-area-inset-top)) + var(--striscia, 0px))
+    var(--gut)
+    max(22px, env(safe-area-inset-bottom));
+  overflow-x: clip;
+}
+
+/* ------------------------------------------------------------- testata */
+
+.testa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.firma {
+  font-family: var(--f-soft);
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+/* Browser dentro le app: una riga sola, in cima, sopra tutto tranne la grana */
+.striscia {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 57;
+  height: var(--striscia, 40px);
+  margin: 0;
+  display: grid;
+  place-items: center;
+  padding: 0 var(--gut);
+  background: var(--lamp);
+  border-bottom: 2.5px solid var(--ink);
+  font-family: var(--f-display);
+  font-variation-settings: "wdth" 66;
+  font-weight: 800;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------- palco */
+
+/* La storia 9:16 al centro: alta quanto lo schermo lascia, mai più larga della pagina */
+.palco {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 14px 0 6px;
+}
+
+.storia {
+  container-type: size;
+  position: relative;
+  height: min(100%, calc((100vw - 2 * var(--gut)) * 16 / 9), 720px);
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--ink);
+  box-shadow: 0 30px 60px -28px rgba(27, 26, 31, 0.55), 0 2px 0 rgba(27, 26, 31, 0.08);
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.storia:active {
+  cursor: grabbing;
+}
+
+.storia[data-vuota] {
+  background: var(--paper-2);
+  box-shadow: inset 0 0 0 2px var(--line);
+  cursor: default;
+}
+
+.immagine {
+  position: absolute;
+  max-width: none;
+  height: auto;
+  pointer-events: none;
+}
+
+.scegli {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.scegli[aria-busy] {
+  opacity: 0.4;
+}
+
+.piuGrande {
+  font-family: var(--f-display);
+  font-variation-settings: "wdth" 62;
+  font-weight: 900;
+  font-size: 46cqw;
+  line-height: 1;
+  color: var(--ink);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.scegli:hover .piuGrande {
+  transform: scale(1.06) rotate(4deg);
+}
+
+/* La scritta: stessa fascia dell'export (tinte.ts), sopra la foto */
+.scritta {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: 20%;
+  height: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  /* largo al massimo l'88% della storia, mai un muro sulle parole corte */
+  --fs: min(calc(88cqw / var(--em, 4)), 50cqw);
+}
+
+.h1 {
+  display: block;
+  text-align: center;
+  transition: color 0.3s;
+}
+
+.mirino {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 12px);
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.disco {
+  width: 38px;
+  height: 38px;
+  overflow: visible;
+  filter: drop-shadow(0 1px 3px var(--ombra, transparent));
+}
+
+.cerchio {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+}
+
+/* L'otturatore che si carica con la tensione */
+.carica {
+  fill: none;
+  stroke: var(--ochre);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transform: rotate(-90deg);
+  transform-origin: 32px 32px;
+}
+
+.polpastrello {
+  fill: var(--ink);
+  transform-origin: 32px 32px;
+  animation: premi 3.6s infinite;
+}
+
+.onda {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  opacity: 0;
+  transform-origin: 32px 32px;
+  animation: onda 3.6s infinite;
+}
+
+.dici {
+  font-family: var(--f-soft);
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--ink);
+  text-shadow: 0 1px 4px var(--ombra, transparent);
+}
+
+/* Preme da solo ogni tanto, a scatti come un disegno animato */
+@keyframes premi {
+  0%, 58%, 100% { transform: scale(1); animation-timing-function: steps(1, end); }
+  62%, 84% { transform: scale(0.7); animation-timing-function: steps(1, end); }
+  90% { transform: scale(1.12); animation-timing-function: steps(1, end); }
+}
+
+@keyframes onda {
+  0%, 62% { opacity: 0; transform: scale(1); }
+  66% { opacity: 0.8; transform: scale(1.3); }
+  92% { opacity: 0; transform: scale(3); }
+}
+
+/* ------------------------------------------------------------- comandi */
+
+.comandi {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.azioni {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+/* Il campione della tinta: pieno del colore della scritta, bordo del colore degli echi */
+.tinta {
+  background: var(--campione);
+  box-shadow: inset 0 0 0 4px var(--paper), inset 0 0 0 7px var(--bordo);
+}
+
+.riga {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.16em;
+  max-width: 100%;
+  font-family: var(--f-display);
+  font-variation-settings: "wdth" 62;
+  font-weight: 900;
+  font-size: clamp(2rem, 9vw, 3.1rem);
+  line-height: 1;
+  color: var(--ink);
+}
+
+.fisso {
+  color: var(--ink-soft);
+}
+
+.campo {
+  position: relative;
+  display: inline-block;
+  min-width: 0;
+}
+
+.input {
+  display: block;
+  width: 6.4em;
+  max-width: 58vw;
+  margin: 0;
+  padding: 0.06em 0.08em 0.14em;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  caret-color: var(--ochre);
+  font: inherit;
+  font-variation-settings: "wdth" 62;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.input::placeholder {
+  color: color-mix(in srgb, var(--ink-soft) 55%, transparent);
+  opacity: 1;
+}
+
+/* La riga sotto la parola: diventa ocra e più grassa quando scrivi */
+.tratto {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.02em;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ink);
+  pointer-events: none;
+  transition: background 0.2s, height 0.2s;
+}
+
+.campo:focus-within .tratto {
+  height: 5px;
+  background: var(--ochre);
+}
+
+/* La ✕ disegnata: niente predica */
+.no {
+  position: absolute;
+  right: -0.32em;
+  top: -0.3em;
+  width: 0.62em;
+  height: 0.62em;
+  overflow: visible;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.no[data-acceso] {
+  visibility: visible;
+}
+
+.no path {
+  fill: none;
+  stroke: var(--ochre);
+  stroke-width: 5.5;
+  stroke-linecap: round;
+}
+
+/* ---------------------------------------------------------------- vari */
+
+.lampo {
+  position: fixed;
+  inset: 0;
+  z-index: 58;
+  background: var(--paper);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nascosto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .polpastrello,
+  .onda {
+    animation: none;
+  }
+  .h1,
+  .tratto,
+  .piuGrande {
+    transition: none;
+  }
+}

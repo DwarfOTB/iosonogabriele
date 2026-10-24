@@ -1,159 +1,118 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital@0;1&family=Courier+Prime:wght@400;700&display=swap');
 @import "tailwindcss";
 
-@theme {
-  /* Colors */
-  --color-sun-core: #F7C842;
-  --color-sun-warm: #F5A623;
-  --color-sun-deep: #E07B2A;
-  --color-sun-glow: #FFF0A0;
-
-  --color-red-primary: #D93025;
-  --color-red-warm:    #C0392B;
-  --color-red-muted:   #8B2E22;
-
-  --color-paper:      #F4EDD8;
-  --color-paper-warm: #EDE0C4;
-  --color-paper-dark: #D9C9A8;
-
-  --color-ink:       #1C1208;
-  --color-ink-soft:  #3D2E1A;
-  --color-ink-faint: #7A6548;
-
-  --color-wood:       #4A3018;
-  --color-wood-light: #6B4C2A;
-
-  --color-white-nat: #FDFAF4;
-
-  /* Fonts */
-  --font-handwriting: 'Caveat', cursive;
-  --font-display:     'Playfair Display', serif;
-  --font-body:        'Lora', serif;
-  --font-mono:        'Courier Prime', monospace;
-}
-
+/*
+ * Lo spazio bianco — token della piattaforma SONO IO.
+ * Carta bianca come la cover, matita, scritte compresse al massimo.
+ * Unico mondo chiaro: niente dark mode, è una scelta.
+ */
 :root {
-  --background: #F4EDD8;
-  --foreground: #1C1208;
+  --paper:      #F5F3EE;
+  --paper-2:    #ECE9E1;
+  --paper-3:    #E2DED3;
+  --ink:        #1B1A1F;
+  --ink-soft:   #5A5862;
+  --line:       #D3CFC4;
+  --ochre:      #E2582A;
+  --lamp:       #F2B33D;
+  --ticking:    #2F4E9A;
+  --night:      #141726;
 
-  /* ── Typography scale (clamp: min, fluid, max) ── */
-  --text-xs:   clamp(0.625rem,  0.5vw  + 0.5rem,  0.75rem);
-  --text-sm:   clamp(0.75rem,   0.6vw  + 0.6rem,  0.875rem);
-  --text-base: clamp(0.875rem,  0.7vw  + 0.7rem,  1rem);
-  --text-md:   clamp(1rem,      0.9vw  + 0.8rem,  1.125rem);
-  --text-lg:   clamp(1.125rem,  1.1vw  + 0.9rem,  1.375rem);
-  --text-xl:   clamp(1.375rem,  1.5vw  + 1rem,    1.75rem);
-  --text-2xl:  clamp(1.75rem,   2vw    + 1.2rem,  2.5rem);
-  --text-3xl:  clamp(2.5rem,    3vw    + 1.5rem,  4rem);
+  --f-display: var(--font-archivo), "Arial Narrow", Impact, sans-serif;
+  --f-soft:    var(--font-fraunces), Georgia, serif;
 
-  /* ── Spacing scale (4px base grid) ── */
-  --space-1:  4px;
-  --space-2:  8px;
-  --space-3:  12px;
-  --space-4:  16px;
-  --space-5:  20px;
-  --space-6:  24px;
-  --space-8:  32px;
-  --space-10: 40px;
-  --space-12: 48px;
-  --space-16: 64px;
-
-  /* ── Easing ── */
-  --ease-out-expo:   cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-expo:    cubic-bezier(0.7, 0, 0.84, 0);
-  --ease-in-out:     cubic-bezier(0.45, 0, 0.55, 1);
-  --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  /* ── Transitions ── */
-  --transition-fast:   120ms var(--ease-out-expo);
-  --transition-base:   220ms var(--ease-out-expo);
-  --transition-slow:   380ms var(--ease-out-expo);
-
-  /* ── Shadows ── */
-  --shadow-sm:   0 1px 3px rgba(28,18,8,0.12), 0 1px 2px rgba(28,18,8,0.08);
-  --shadow-md:   0 4px 12px rgba(28,18,8,0.15), 0 2px 6px rgba(28,18,8,0.10);
-  --shadow-lg:   0 12px 32px rgba(28,18,8,0.18), 0 6px 16px rgba(28,18,8,0.12);
-  --shadow-xl:   0 24px 56px rgba(28,18,8,0.22), 0 12px 24px rgba(28,18,8,0.14);
+  --gut: clamp(16px, 3vw, 40px);
+  color-scheme: light;
 }
 
-* {
-  box-sizing: border-box;
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--f-display);
+  font-variation-settings: "wdth" 80;
+  font-size: 16px;
+  line-height: 1.45;
   overflow-x: hidden;
-  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ── Focus ring system ── */
-:focus-visible {
-  outline: 2px solid var(--color-sun-core);
-  outline-offset: 3px;
-  border-radius: 2px;
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+
+:focus-visible { outline: 3px solid var(--ochre); outline-offset: 3px; }
+
+::selection { background: var(--lamp); color: var(--ink); }
+
+/* Etichette: compresse, maiuscole, spaziate */
+.etichetta {
+  font-family: var(--f-display);
+  font-variation-settings: "wdth" 62;
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
 }
 
-/* ── Keyframes ── */
-@keyframes panelIn {
-  from { transform: translateY(16px) scale(0.97); opacity: 0; }
-  to   { transform: translateY(0) scale(1);        opacity: 1; }
+/* Bottone: pillola con ombra piena */
+.bottone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  background: var(--lamp);
+  color: var(--ink);
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 4px 5px 0 var(--ink);
+  cursor: pointer;
+  font-family: var(--f-display);
+  font-variation-settings: "wdth" 62;
+  font-weight: 900;
+  font-size: 1.3rem;
+  line-height: 1;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: transform .12s, box-shadow .12s, background .25s;
+  -webkit-tap-highlight-color: transparent;
+}
+.bottone:active { transform: translate(3px, 4px); box-shadow: 1px 1px 0 var(--ink); }
+.bottone:disabled,
+.bottone[aria-disabled="true"] { background: var(--paper-2); cursor: default; transform: none; box-shadow: 4px 5px 0 var(--ink); }
+.bottone--carta { background: var(--paper); }
+
+/* Bottone tondo con simbolo (+, ←, ✕): la comunicazione passa per simboli */
+.simbolo {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2.5px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: 1.5rem;
+  line-height: 1;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-@keyframes panelOut {
-  from { transform: translateY(0) scale(1);        opacity: 1; }
-  to   { transform: translateY(16px) scale(0.97);  opacity: 0; }
-}
+/* Entrata morbida delle pagine */
+.entra { animation: entra .6s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 80ms); }
+@keyframes entra { from { opacity: 0; transform: translateY(12px); } }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes solRise {
-  from { transform: translateY(60px); opacity: 0.2; }
-  to   { transform: translateY(0);    opacity: 1;   }
-}
-
-@keyframes dotPulse {
-  0%, 100% { box-shadow: 0 0 6px  rgba(247,200,66,0.4); }
-  50%       { box-shadow: 0 0 16px rgba(247,200,66,0.85); }
-}
-
-@keyframes swarmin {
-  from { transform: translate(var(--ox, 0px), var(--oy, 0px)) scale(0.3); opacity: 0; }
-  to   { transform: translate(0, 0) scale(1); opacity: 1; }
-}
-
-@keyframes swarmout {
-  from { transform: translate(0, 0) scale(1); opacity: 1; }
-  to   { transform: translate(var(--ox, 0px), var(--oy, 0px)) scale(0.3); opacity: 0; }
-}
-
-/* ── Theatrical vignette (frames the scene, hides edge seams) ── */
-.sceneVignette {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-  background: radial-gradient(ellipse 72% 68% at 50% 54%,
-    transparent 42%, rgba(13, 9, 5, 0.55) 72%, rgba(13, 9, 5, 0.92) 100%);
-}
-/* Mobile: wider/shorter ellipse masks the empty top/bottom letterbox bands */
-@media (max-width: 768px), (hover: none) and (pointer: coarse) {
-  .sceneVignette {
-    background: radial-gradient(ellipse 100% 56% at 50% 46%,
-      transparent 36%, rgba(13, 9, 5, 0.62) 68%, rgba(13, 9, 5, 0.97) 100%);
-  }
-}
-
-/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+  .entra { animation: none; }
+  .bottone { transition: none; }
 }

@@ -1,0 +1,118 @@
+/* Il foglio della storia scattata: sta sopra la pagina, sotto la grana */
+.velo {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-items: center;
+  align-items: center;
+  gap: 22px;
+  padding:
+    calc(max(18px, env(safe-area-inset-top)) + var(--striscia, 0px))
+    var(--gut)
+    max(24px, env(safe-area-inset-bottom));
+  background: var(--paper);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  outline: none;
+}
+
+.carta {
+  position: relative;
+  margin: 0;
+  height: min(66svh, 640px, calc((100vw - 2 * var(--gut) - 8px) * 16 / 9));
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--ink);
+  box-shadow: 0 30px 60px -28px rgba(27, 26, 31, 0.55);
+  animation: posa 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.posto {
+  position: absolute;
+  inset: 0;
+}
+
+/* La bozza sotto, il PNG vero sopra quando è pronto (uguali: il passaggio non si vede) */
+.foto {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-select: none;
+  /* tenendo premuto su iOS esce "Salva immagine": è giusto lasciarlo */
+  -webkit-touch-callout: default;
+  animation: compare 0.24s ease-out both;
+}
+
+/* Mentre disegna: la matita tratteggia avanti e indietro */
+.matita,
+.croce {
+  position: absolute;
+  inset: 12% 10%;
+  width: 80%;
+  height: 76%;
+  overflow: visible;
+}
+
+.matita path {
+  fill: none;
+  stroke: var(--paper);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: traccia 0.9s ease-in-out infinite alternate;
+}
+
+.croce path {
+  fill: none;
+  stroke: var(--ochre);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.azioni {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 14px 16px;
+  min-height: 60px;
+}
+
+@keyframes posa {
+  from {
+    opacity: 0;
+    transform: translateY(14px) rotate(-1.2deg);
+  }
+}
+
+@keyframes compare {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes traccia {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carta,
+  .foto {
+    animation: none;
+  }
+  .matita path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

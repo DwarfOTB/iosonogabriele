@@ -1,0 +1,19 @@
+.nome {
+  grid-row: 2;
+  align-self: start;
+  display: flex;
+  justify-content: center;
+  font-size: clamp(3rem, 15vw, 8rem);
+}
+
+.presto {
+  grid-row: 3;
+  justify-self: center;
+  margin: 0;
+  font-family: var(--f-display);
+  font-variation-settings: "wdth" 62;
+  font-weight: 900;
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--ink-soft);
+}

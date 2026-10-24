@@ -1,0 +1,106 @@
+/* Lo spazio bianco: interfaccia leggera sopra la stanza 3D. Lascia passare il tocco al 3D */
+.spazio {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  height: 100svh;
+  padding:
+    max(6px, env(safe-area-inset-top))
+    max(var(--gut), env(safe-area-inset-right))
+    max(14px, env(safe-area-inset-bottom))
+    max(var(--gut), env(safe-area-inset-left));
+  pointer-events: none;
+}
+
+.spazio > * > * {
+  pointer-events: auto;
+}
+
+.testata {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+}
+
+.firma {
+  margin: 0;
+  font-family: var(--f-soft);
+  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 18;
+  font-weight: 500;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.titolo {
+  display: flex;
+  justify-content: flex-start;
+  font-size: clamp(2.8rem, 13vw, 6.4rem);
+  margin-top: -0.25em;
+}
+
+.comandi {
+  grid-row: 4;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.guida {
+  margin: 0;
+  font-family: var(--f-soft);
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink-soft);
+  animation: entra 0.6s 0.8s both;
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  box-shadow: 0 10px 30px -14px rgba(27, 26, 31, 0.35);
+}
+
+/* I cuscini rimasti: pastiglie piene, quelli usati vuoti */
+.conta {
+  display: grid;
+  grid-template-columns: repeat(6, 9px);
+  gap: 4px;
+  padding: 0 6px;
+}
+
+.conta i {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1.5px var(--ink-soft);
+}
+
+.conta i[data-pieno] {
+  background: var(--ochre);
+  box-shadow: none;
+}
+
+.ricomincia[data-forte] {
+  background: var(--lamp);
+  animation: chiama 1.8s ease-out infinite;
+}
+
+@keyframes chiama {
+  0% { box-shadow: 0 0 0 0 rgba(242, 179, 61, 0.7); }
+  100% { box-shadow: 0 0 0 16px rgba(242, 179, 61, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ricomincia[data-forte],
+  .guida {
+    animation: none;
+  }
+}

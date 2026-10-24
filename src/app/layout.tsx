@@ -1,35 +1,53 @@
 import type { Metadata, Viewport } from 'next'
+import { Archivo, Fraunces } from 'next/font/google'
+import { Nav } from '@/components/nav/Nav'
+import { Mondo } from '@/features/mondo/Mondo'
 import './globals.css'
+
+// Archivo con l'asse di larghezza: le scritte vivono compresse al minimo (wdth 62)
+const archivo = Archivo({
+  subsets: ['latin', 'latin-ext'],
+  axes: ['wdth'],
+  variable: '--font-archivo',
+  display: 'swap',
+})
+
+// Fraunces con gli assi SOFT e WONK: lettere morbide, imbottite, un po' storte
+const fraunces = Fraunces({
+  subsets: ['latin', 'latin-ext'],
+  axes: ['SOFT', 'WONK', 'opsz'],
+  variable: '--font-fraunces',
+  display: 'swap',
+})
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
   viewportFit: 'cover',
-  themeColor: '#0d0905',
+  themeColor: '#F5F3EE',
 }
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://iosonogabriele.it'),
-  title: { default: 'iosonogabriele', template: '%s — iosonogabriele' },
-  description: 'Il Sole è Rosso — album e tour estivo 2025. Entra nel mondo 3D di iosonogabriele.',
+  title: { default: 'iosonogabriele', template: '%s · iosonogabriele' },
+  description: 'SONO IO. — il nuovo singolo di iosonogabriele.',
   openGraph: {
     type: 'website',
     locale: 'it_IT',
     url: 'https://iosonogabriele.it',
     siteName: 'iosonogabriele',
-    images: [{ url: '/images/og-image.jpg', width: 1200, height: 630 }],
+    images: [{ url: '/sono-io/cover.jpg', width: 921, height: 918 }],
   },
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="it" className="h-full">
-      <body className="min-h-full">{children}</body>
+    <html lang="it" className={`${archivo.variable} ${fraunces.variable}`}>
+      <body>
+        <Mondo />
+        {children}
+        <Nav />
+      </body>
     </html>
   )
 }

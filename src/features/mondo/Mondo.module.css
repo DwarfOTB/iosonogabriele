@@ -1,0 +1,58 @@
+/* La stanza bianca sta sotto a tutte le pagine che la usano */
+.mondo {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #F3F1EC;
+  transition: opacity 0.45s ease, visibility 0s linear 0s;
+}
+
+.mondo[data-spento] {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.mondo canvas {
+  touch-action: none;
+}
+
+/* Mentre la stanza si carica: un "+" che gira piano al centro */
+.carica {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: 3rem;
+  color: var(--ink-soft);
+  animation: gira 2.4s linear infinite;
+}
+
+@keyframes gira {
+  to { rotate: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carica { animation: none; }
+}
+
+/* Il nome sopra ogni porta: compresso, nero, la chiusa più chiara */
+.etichetta {
+  display: block;
+  font-family: var(--f-display);
+  font-variation-settings: "wdth" 62;
+  font-weight: 900;
+  font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+.etichetta[data-chiusa] {
+  color: color-mix(in srgb, var(--ink) 45%, transparent);
+}
