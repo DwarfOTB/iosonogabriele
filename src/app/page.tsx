@@ -1,5 +1,6 @@
-import SpazioBianco from '@/features/spazio-bianco/SpazioBianco'
+import Atrio from '@/features/atrio/Atrio'
 
+/** La home sono le porte: da qui si entra nel fortino e in SONO ___. */
 export default function Pagina() {
-  return <SpazioBianco />
+  return <Atrio />
 }

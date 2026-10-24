@@ -36,7 +36,7 @@ interface StatoMondo {
 }
 
 /** Misure che cambiano a ogni fotogramma: fuori da React, per non ridisegnare l'interfaccia */
-export const vivo = { cima: 0 }
+export const vivo = { cima: 0, sulTappeto: 0 }
 
 export const useMondo = create<StatoMondo>((set) => ({
   fase: 'gioco',
@@ -45,7 +45,7 @@ export const useMondo = create<StatoMondo>((set) => ({
   inPiedi: false,
   partita: 0,
   portaAperta: null,
-  portaFuoco: 1,
+  portaFuoco: 0,
   gira: (verso = 1) => set((s) => ({ giro: (s.giro + verso + 8) % 8 })),
   alza: () => set((s) => ({ inPiedi: !s.inPiedi })),
   ricomincia: () => set((s) => ({ partita: s.partita + 1, fase: 'gioco', giro: 0, inPiedi: false })),

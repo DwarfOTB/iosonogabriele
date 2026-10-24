@@ -10,6 +10,7 @@ import {
   type CSSProperties,
 } from 'react'
 import { Strozzato, type StrozzatoHandle } from '@/components/strozzato/Strozzato'
+import { TornaPorte } from '@/components/torna/TornaPorte'
 import { CAMPAGNA, NOME_ARTISTA } from '@/content/campagna'
 import { movimentoRidotto } from '@/lib/casuale'
 import { Anteprima, type Scatto } from './Anteprima'
@@ -260,6 +261,7 @@ export default function Generatore() {
 
       <main className={s.pagina} inert={aperta}>
         <header className={s.testa}>
+          <TornaPorte />
           <span className={`${s.firma} entra`}>{NOME_ARTISTA}</span>
         </header>
 

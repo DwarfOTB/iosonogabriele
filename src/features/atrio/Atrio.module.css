@@ -1,4 +1,4 @@
-/* L'atrio sopra la stanza 3D: il tocco passa alle porte */
+/* Le porte (la home) sopra la stanza 3D: il tocco passa alle porte */
 .atrio {
   position: relative;
   z-index: 1;
@@ -22,6 +22,15 @@
   align-items: center;
   justify-content: space-between;
   min-height: 52px;
+}
+
+.invito {
+  margin: 6px 0 0;
+  font-family: var(--f-soft);
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink-soft);
 }
 
 .firma {

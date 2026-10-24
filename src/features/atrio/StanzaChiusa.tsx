@@ -1,6 +1,7 @@
 'use client'
 
 import { Strozzato } from '@/components/strozzato/Strozzato'
+import { TornaPorte } from '@/components/torna/TornaPorte'
 import css from './Atrio.module.css'
 import stanza from './StanzaChiusa.module.css'
 
@@ -11,7 +12,9 @@ import stanza from './StanzaChiusa.module.css'
 export default function StanzaChiusa({ nome }: { nome: string }) {
   return (
     <main className={css.atrio}>
-      <header className={css.testata} />
+      <header className={css.testata}>
+        <TornaPorte />
+      </header>
       <div className={stanza.nome}>
         <Strozzato as="h1" testo={nome} spasmo entraStrozzato style={{ fontSize: '1em' }} />
       </div>

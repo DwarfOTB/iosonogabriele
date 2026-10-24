@@ -11,7 +11,7 @@ const Scena = dynamic(() => import('./Scena'), {
 })
 
 /** Le pagine che stanno dentro la stanza bianca */
-const NEL_MONDO = new Set(['/', '/atrio', '/balconi', '/studio'])
+const NEL_MONDO = new Set(['/', '/fortino', '/balconi', '/studio'])
 
 /** Senza WebGL la scena non parte: resta la carta, le pagine funzionano lo stesso */
 class SenzaWebGL extends Component<{ children: ReactNode }, { rotto: boolean }> {

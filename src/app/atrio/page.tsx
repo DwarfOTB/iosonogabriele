@@ -1,8 +1,6 @@
-import type { Metadata } from 'next'
-import Atrio from '@/features/atrio/Atrio'
+import { redirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'Atrio' }
-
+/** Le porte ora sono la home: il vecchio indirizzo ci rimanda */
 export default function Pagina() {
-  return <Atrio />
+  redirect('/')
 }

@@ -1,7 +1,7 @@
 /**
  * La campagna in corso. È l'unico posto da toccare a ogni nuova uscita:
- * il minigioco dello spazio bianco, la frase del generatore e quali stanze
- * dell'atrio sono aperte dipendono da qui, non dal codice delle pagine.
+ * il minigioco, la frase del generatore e quali porte della home sono
+ * aperte dipendono da qui, non dal codice delle pagine.
  */
 
 export type MinigiocoId = 'fortino'
@@ -41,7 +41,7 @@ export const CAMPAGNA: Campagna = {
   minigioco: 'fortino',
   generatore: { prefisso: 'SONO', suffisso: '.', esempio: 'IO', maxLen: 14 },
   stanze: [
-    { id: 'fortino', nome: 'IL FORTINO', href: '/', aperta: true },
+    { id: 'fortino', nome: 'IL FORTINO', href: '/fortino', aperta: true },
     { id: 'sono', nome: 'SONO ___.', href: '/sono', aperta: true },
     { id: 'balconi', nome: 'I BALCONI', href: '/balconi', aperta: false },
     { id: 'studio', nome: 'LO STUDIO', href: '/studio', aperta: false },

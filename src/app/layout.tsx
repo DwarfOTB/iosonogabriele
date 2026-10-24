@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import { Archivo, Fraunces } from 'next/font/google'
-import { Nav } from '@/components/nav/Nav'
 import { Mondo } from '@/features/mondo/Mondo'
 import './globals.css'
 
@@ -46,7 +45,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <Mondo />
         {children}
-        <Nav />
       </body>
     </html>
   )

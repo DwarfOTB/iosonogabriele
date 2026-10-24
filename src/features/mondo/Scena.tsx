@@ -33,11 +33,11 @@ export default function Scena({ percorso, attiva }: { percorso: string; attiva: 
     >
       <Suspense fallback={null}>
         {/* passo fisso: dopo uno scatto lento la fisica recupera a piccoli passi invece di fare un salto che attraversa il pavimento */}
-        <Physics gravity={[0, -9.81, 0]} paused={!attiva || percorso !== '/'} timeStep={1 / 60}>
+        <Physics gravity={[0, -9.81, 0]} paused={!attiva || percorso !== '/fortino'} timeStep={1 / 60}>
           <Stanza />
-          <Fortino3D interattivo={attiva && percorso === '/'} />
+          <Fortino3D interattivo={attiva && percorso === '/fortino'} />
         </Physics>
-        <Porte3D visibili={attiva && percorso !== '/'} />
+        <Porte3D visibili={attiva && percorso !== '/fortino'} />
         <Regia percorso={percorso} />
         {/* se la GPU fatica si abbassa la risoluzione, se respira si rialza */}
         <PerformanceMonitor onDecline={() => setDpr(1)} onIncline={() => setDpr(1.5)} />

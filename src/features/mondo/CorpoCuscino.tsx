@@ -1,10 +1,10 @@
 'use client'
 
 import { useFrame } from '@react-three/fiber'
-import { RigidBody, interactionGroups, type RapierRigidBody } from '@react-three/rapier'
+import { CuboidCollider, RigidBody, interactionGroups, type RapierRigidBody } from '@react-three/rapier'
 import { forwardRef, useRef } from 'react'
 import * as THREE from 'three'
-import { geometriaCuscino, type Cuscino } from './cuscini'
+import { MISURE, geometriaCuscino, type Cuscino } from './cuscini'
 import { FINITURE, tessuto, type Stoffa } from './tessuti'
 
 /** Il cuscino in mano non tocca niente: non deve spingere il fortino mentre lo sposti */
@@ -49,13 +49,15 @@ export const CorpoCuscino = forwardRef<RapierRigidBody, Props>(function CorpoCus
   ref,
 ) {
   const pelle = useRef<THREE.Mesh>(null)
+  const [w, h, d] = MISURE[dati.forma]
   const molla = useRef({ s: 0, v: 0 })
 
   useFrame((_, dt) => {
     const m = molla.current
     if (Math.abs(m.s) < 1e-4 && Math.abs(m.v) < 1e-4) return
     const h = Math.min(dt, 1 / 30)
-    m.v += (-220 * m.s - 14 * m.v) * h
+    // smorzamento critico: si schiaccia e torna, senza ballare
+    m.v += (-220 * m.s - 30 * m.v) * h
     m.s += m.v * h
     const p = pelle.current
     if (p) p.scale.set(1 + m.s * 0.5, 1 - m.s, 1 + m.s * 0.5)
@@ -65,15 +67,12 @@ export const CorpoCuscino = forwardRef<RapierRigidBody, Props>(function CorpoCus
     <RigidBody
       ref={ref}
       type={tipo}
-      colliders="hull"
+      colliders={false}
       ccd
       position={posizione}
       quaternion={rotazione}
-      friction={1.25}
-      restitution={0.02}
-      linearDamping={0.45}
-      angularDamping={1.1}
-      collisionGroups={tipo === 'kinematicPosition' ? GRUPPO_MANO : GRUPPO_TUTTI}
+      linearDamping={0.6}
+      angularDamping={2.4}
       onCollisionEnter={({ target }) => {
         const v = target.rigidBody?.linvel()
         if (!v) return
@@ -81,6 +80,15 @@ export const CorpoCuscino = forwardRef<RapierRigidBody, Props>(function CorpoCus
         if (urto > 0.015) molla.current.v += urto * 9
       }}
     >
+      {/*
+        Collisione a scatola, non a forma di cuscino: il fondo bombato faceva
+        dondolare i cuscini come una barca. Un cuscino vero sotto il peso si
+        appiattisce, quindi la scatola un po' più bassa del centro è più vera.
+      */}
+      <CuboidCollider args={[(w / 2) * 0.94, (h / 2) * 0.86, (d / 2) * 0.94]} friction={1.25}
+        restitution={0.02}
+        collisionGroups={tipo === 'kinematicPosition' ? GRUPPO_MANO : GRUPPO_TUTTI}
+      />
       <mesh ref={pelle} visible={!nascosto} geometry={geometriaCuscino(dati.forma)} material={materiale(dati.stoffa)} castShadow receiveShadow />
     </RigidBody>
   )

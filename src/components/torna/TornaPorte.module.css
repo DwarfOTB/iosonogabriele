@@ -1,0 +1,28 @@
+.torna {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px 9px 12px;
+  border-radius: 999px;
+  border: 2.5px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-display);
+  font-variation-settings: "wdth" 62;
+  font-weight: 900;
+  font-size: 1.05rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.12s, background 0.2s;
+}
+
+.torna:hover {
+  background: var(--lamp);
+}
+
+.torna:active {
+  transform: scale(0.96);
+}

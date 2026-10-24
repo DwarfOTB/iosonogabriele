@@ -72,6 +72,7 @@ function Partita({ partita, interattivo }: { partita: number; interattivo: boole
   useEffect(() => {
     imposta(salvato ? { fase: 'completo', rimasti: 0 } : { fase: 'gioco', rimasti: CUSCINI })
     vivo.cima = 0
+    vivo.sulTappeto = 0
   }, [salvato, imposta])
 
   const lascia = useCallback(() => {
@@ -232,7 +233,7 @@ function Partita({ partita, interattivo }: { partita: number; interattivo: boole
   }, [interattivo, inMano, leggiTre, lascia])
 
   // ----------------------------------------------------------------- ciclo
-  useFrame((stato, dt) => {
+  useFrame((_, dt) => {
     const ora = performance.now()
     const mondo = useMondo.getState()
 
@@ -255,6 +256,7 @@ function Partita({ partita, interattivo }: { partita: number; interattivo: boole
       }
     }
     vivo.cima += (cima - vivo.cima) * Math.min(1, dt * 3)
+    vivo.sulTappeto = sulTappeto
 
     // il cuscino in mano: segue il puntatore, sospeso sopra la cima
     if (inMano) {
@@ -267,7 +269,7 @@ function Partita({ partita, interattivo }: { partita: number; interattivo: boole
       if (b) {
         const t = b.translation()
         const k = Math.min(1, dt * 14)
-        _v.set(t.x + (m.x - t.x) * k, m.y + Math.sin(stato.clock.elapsedTime * 2.1) * 0.012, t.z + (m.z - t.z) * k)
+        _v.set(t.x + (m.x - t.x) * k, m.y, t.z + (m.z - t.z) * k)
         b.setNextKinematicTranslation(_v)
         b.setNextKinematicRotation(m.q)
       }
@@ -334,8 +336,27 @@ function Partita({ partita, interattivo }: { partita: number; interattivo: boole
           nascosto={i >= lasciati && !interattivo}
         />
       ))}
-      <Lampada accesa={accesa} filo={interattivo} />
+      {/* dalle porte si vede la lampada solo se è già accesa: spenta, a mezz'aria, non dice niente */}
+      {(interattivo || accesa) && <Lampada accesa={accesa} filo={interattivo} />}
+      {interattivo && !accesa && <Traguardo />}
     </>
+  )
+}
+
+/**
+ * Il segno del traguardo: un anello caldo che pulsa all'altezza della
+ * lampada, sopra il tappeto. Dice "il fortino deve arrivare fin qui".
+ */
+function Traguardo() {
+  const mat = useRef<THREE.MeshBasicMaterial>(null)
+  useFrame((stato) => {
+    if (mat.current) mat.current.opacity = 0.35 + Math.sin(stato.clock.elapsedTime * 2.4) * 0.2
+  })
+  return (
+    <mesh position-y={ALTEZZA_LAMPADA} rotation-x={Math.PI / 2}>
+      <torusGeometry args={[0.55, 0.008, 8, 96]} />
+      <meshBasicMaterial ref={mat} color="#F2B33D" transparent opacity={0.4} toneMapped={false} depthWrite={false} />
+    </mesh>
   )
 }
 

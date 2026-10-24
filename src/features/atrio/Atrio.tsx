@@ -1,6 +1,6 @@
 'use client'
 
-import { NOME_ARTISTA } from '@/content/campagna'
+import { CAMPAGNA, NOME_ARTISTA } from '@/content/campagna'
 import { PORTE } from '@/features/mondo/regole'
 import { useMondo } from '@/features/mondo/stato'
 import css from './Atrio.module.css'
@@ -18,10 +18,13 @@ export default function Atrio() {
   return (
     <main className={css.atrio}>
       <header className={css.testata}>
-        <p className={css.firma}>{NOME_ARTISTA}</p>
+        <div>
+          <p className={css.firma}>{NOME_ARTISTA}</p>
+          <p className={css.invito}>Tocca una porta per entrare.</p>
+        </div>
       </header>
 
-      <h1 className={css.nascosto}>Atrio</h1>
+      <h1 className={css.nascosto}>{CAMPAGNA.titolo}</h1>
 
       <nav className={css.giro} aria-label="Porte">
         <button type="button" className="simbolo" aria-label="Porta precedente" onClick={() => vai(-1)}>

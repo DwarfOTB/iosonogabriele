@@ -43,7 +43,7 @@ export function Regia({ percorso }: { percorso: string }) {
       davanti(entra, -2.5, 1.05, T)
       davanti(entra, 0.15, 1.12, P)
       rapidita = 1.5
-    } else if (percorso === '/atrio') {
+    } else if (percorso === '/') {
       if (aspetto < 1.15) {
         const p = PORTE[Math.min(PORTE.length - 1, Math.max(0, s.portaFuoco))]
         davanti(p, 0, 1.15, T)
@@ -57,7 +57,7 @@ export function Regia({ percorso }: { percorso: string }) {
       davanti(p, 0, 1.15, T)
       davanti(p, 3.1, 1.4, P)
     } else {
-      // il fortino: il tappeto sta tutto nell'inquadratura, la camera sale con la cima
+      // /fortino: il tappeto sta tutto nell'inquadratura, la camera sale con la cima
       const cima = vivo.cima
       const semiLargo = stretto ? 1.15 : 1.9
       const tanH = Math.tan(THREE.MathUtils.degToRad(fov / 2)) * aspetto

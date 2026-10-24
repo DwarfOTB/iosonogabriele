@@ -14,10 +14,12 @@ export interface Progressi {
   completato: boolean
   /** Il fortino finito, cuscino per cuscino: si ritrova com'era alla visita dopo */
   fortino: CuscinoSalvato[] | null
+  /** Ha già visto la spiegazione del fortino */
+  introVista: boolean
 }
 
 const CHIAVE = `iosonogabriele:${CAMPAGNA.id}:v2`
-const VUOTO: Progressi = { completato: false, fortino: null }
+const VUOTO: Progressi = { completato: false, fortino: null, introVista: false }
 
 let cache: Progressi | null = null
 const ascoltatori = new Set<() => void>()
@@ -47,8 +49,13 @@ function scrivi(p: Progressi) {
 export function salvaFortino(fortino: CuscinoSalvato[]) {
   // rilegge dallo storage: un'altra scheda potrebbe aver scritto nel frattempo
   cache = null
-  leggi()
-  scrivi({ completato: true, fortino })
+  const p = leggi()
+  scrivi({ ...p, completato: true, fortino })
+}
+
+export function segnaIntroVista() {
+  cache = null
+  scrivi({ ...leggi(), introVista: true })
 }
 
 /** Leggibile anche fuori da React (dal mondo 3D) */
