@@ -8,16 +8,19 @@ interface CorniceProps {
   foto: Foto | null
   inquadratura: Inquadratura
   onInquadra: (q: Inquadratura) => void
-  /** La scritta sopra la foto: dentro un elemento con data-presa, che non sposta la foto */
+  /** La scritta e i bottoni sopra la foto: dentro elementi con data-presa, che non spostano la foto */
   children?: ReactNode
+  /** Cosa c'è senza foto: la fotocamera dal vivo, o il "+" per sceglierne una */
   vuota?: ReactNode
+  /** Senza foto si vede la fotocamera: fondo scuro come un mirino, non carta */
+  diretta?: boolean
 }
 
 /**
  * La storia 9:16 a schermo. Con un dito si sposta la foto, con due (o con la
  * rotella) si ingrandisce. Il titolo sopra resta la presa per strozzare.
  */
-export function Cornice({ foto, inquadratura, onInquadra, children, vuota }: CorniceProps) {
+export function Cornice({ foto, inquadratura, onInquadra, children, vuota, diretta }: CorniceProps) {
   const box = useRef<HTMLDivElement>(null)
   const dita = useRef(new Map<number, { x: number; y: number }>())
   const ultima = useRef(inquadratura)
@@ -55,7 +58,8 @@ export function Cornice({ foto, inquadratura, onInquadra, children, vuota }: Cor
     <div
       ref={box}
       className={s.storia}
-      data-vuota={!foto || undefined}
+      data-vuota={(!foto && !diretta) || undefined}
+      data-diretta={(!foto && diretta) || undefined}
       onPointerDown={(e) => {
         if (!foto || (e.target as Element).closest('[data-presa]')) return
         e.currentTarget.setPointerCapture(e.pointerId)

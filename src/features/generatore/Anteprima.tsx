@@ -23,7 +23,8 @@ interface AnteprimaProps {
 
 /**
  * La storia appena scattata, su un foglio 9:16. Mentre si disegna c'è la
- * matita che tratteggia; poi CONDIVIDI (se il sistema sa condividere file),
+ * matita che tratteggia; poi CONDIVIDI (se il sistema sa condividere file:
+ * da lì Instagram → Storia, nessun sito può saltare quel passaggio),
  * SALVA e ↻ per rifarla.
  */
 
@@ -80,7 +81,7 @@ export function Anteprima({ scatto, testo, onRifai }: AnteprimaProps) {
   const condividi = async () => {
     if (scatto.fase !== 'pronto' || occupato) return
     setOccupato(true)
-    const esito = await condividiFile(scatto.file, testo)
+    const esito = await condividiFile(scatto.file)
     setOccupato(false)
     // se il sistema rifiuta (gesto scaduto, permessi) si ripiega sul download
     if (esito === 'errore') salvaFile(scatto.url, scatto.file.name)
@@ -145,6 +146,11 @@ export function Anteprima({ scatto, testo, onRifai }: AnteprimaProps) {
         <button type="button" className="simbolo" aria-label="Rifai" onClick={onRifai}>
           ↻
         </button>
+        {condivisibile && (
+          <p className={s.strada}>
+            CONDIVIDI <span aria-hidden="true">→</span> Instagram <span aria-hidden="true">→</span> Storia
+          </p>
+        )}
       </div>
     </div>
   )

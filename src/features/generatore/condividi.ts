@@ -41,13 +41,14 @@ export function puoCondividereFile(file: File): boolean {
 export type EsitoCondivisione = 'fatto' | 'annullato' | 'errore'
 
 /**
- * Solo il file, senza `text`: con file + testo iOS e alcune app (storie IG,
- * WhatsApp) prendono solo il testo o tolgono "Salva immagine". Il link è già
- * stampato sull'immagine.
+ * Solo il file, senza `text` né `title`: con file + testo iOS li manda come
+ * due cose separate e l'estensione di Instagram risponde "contenuto non
+ * disponibile" (o le storie prendono solo il testo). Il link è già stampato
+ * sull'immagine.
  */
-export async function condividiFile(file: File, titolo: string): Promise<EsitoCondivisione> {
+export async function condividiFile(file: File): Promise<EsitoCondivisione> {
   try {
-    await navigator.share({ files: [file], title: titolo })
+    await navigator.share({ files: [file] })
     return 'fatto'
   } catch (e) {
     // chiudere il pannello di condivisione non è un errore (nelle WebView non sempre è un DOMException)

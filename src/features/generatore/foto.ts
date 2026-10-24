@@ -1,5 +1,5 @@
 /**
- * La foto scelta dal rullino e come sta dentro la storia 9:16.
+ * La foto (dalla fotocamera o dal rullino) e come sta dentro la storia 9:16.
  * Tutto in unità della storia (larghezza = 1, altezza = 16/9), così la stessa
  * inquadratura vale per l'anteprima a schermo e per l'export a 1080×1920.
  */
@@ -43,6 +43,37 @@ export async function caricaFoto(file: File): Promise<Foto> {
   return { bitmap, url: URL.createObjectURL(file), iw: bitmap.width, ih: bitmap.height }
 }
 
+/**
+ * Il fotogramma della fotocamera in questo istante, intero (l'inquadratura 9:16
+ * la fa poi `posa`, come object-fit: cover a schermo). La frontale si vede a
+ * specchio e si salva a specchio: la foto è quella che avevi davanti.
+ */
+export async function fotoDaVideo(v: HTMLVideoElement, specchio: boolean): Promise<Foto> {
+  const iw = v.videoWidth
+  const ih = v.videoHeight
+  if (!iw || !ih) throw new Error('fotogramma vuoto')
+  const c = document.createElement('canvas')
+  c.width = iw
+  c.height = ih
+  try {
+    const g = c.getContext('2d')
+    if (!g) throw new Error('canvas 2d non disponibile')
+    if (specchio) {
+      g.translate(iw, 0)
+      g.scale(-1, 1)
+    }
+    g.drawImage(v, 0, 0, iw, ih)
+    const [bitmap, jpeg] = await Promise.all([
+      createImageBitmap(c),
+      new Promise<Blob>((ok, ko) => c.toBlob((b) => (b ? ok(b) : ko(new Error('jpeg non generato'))), 'image/jpeg', 0.92)),
+    ])
+    return { bitmap, url: URL.createObjectURL(jpeg), iw, ih }
+  } finally {
+    c.width = 0
+    c.height = 0
+  }
+}
+
 export function liberaFoto(f: Foto | null) {
   if (!f) return
   f.bitmap.close()
@@ -72,17 +103,24 @@ export function blocca(f: Pick<Foto, 'iw' | 'ih'>, q: Inquadratura): Inquadratur
 
 /**
  * Luminosità media della fascia dove cade la scritta (0 nero, 1 bianco):
- * serve a scegliere da sola la tinta che si legge.
+ * serve a scegliere da sola la tinta che si legge. `img` è la foto o il video
+ * dal vivo, `dim` le sue misure.
  */
-export function luceZona(f: Foto, q: Inquadratura, y0: number, y1: number): number {
+export function luceZona(
+  img: CanvasImageSource,
+  dim: Pick<Foto, 'iw' | 'ih'>,
+  q: Inquadratura,
+  y0: number,
+  y1: number,
+): number {
   const N = 48
   const c = document.createElement('canvas')
   c.width = N
   c.height = Math.round(N * ASPETTO)
   const g = c.getContext('2d', { willReadFrequently: true })
   if (!g) return 0.5
-  const p = posa(f, q)
-  g.drawImage(f.bitmap, p.x * N, p.y * N, p.w * N, p.h * N)
+  const p = posa(dim, q)
+  g.drawImage(img, p.x * N, p.y * N, p.w * N, p.h * N)
   const a = Math.floor(y0 * c.height)
   const b = Math.max(a + 1, Math.floor(y1 * c.height))
   const px = g.getImageData(0, a, N, b - a).data

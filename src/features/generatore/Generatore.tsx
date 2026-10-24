@@ -19,6 +19,7 @@ import { puoCondividereFile, useInApp } from './condividi'
 import { STORIA, esportaImmagine } from './esporta'
 import { parolaBloccata } from './filtro'
 import { INQUADRATURA_INIZIALE, caricaFoto, liberaFoto, luceZona, type Foto, type Inquadratura } from './foto'
+import { useFotocamera, type Lato } from './fotocamera'
 import { Mirino, type MirinoHandle } from './Mirino'
 import { misuraEm, stimaEm } from './misura'
 import { maiuscola, nomeFile, pulisciParola } from './parola'
@@ -40,6 +41,12 @@ const SCOSSA: Keyframe[] = [0, -4, 3.5, -3, 2.5, -1.5, 1, 0].map((x, i) => ({
   transform: `translateX(${x}%) rotate(${i % 2 ? 1.2 : -1}deg)`,
   easing: 'steps(1, end)',
 }))
+
+/** Ogni quanto si guarda la luce della fotocamera per scegliere la tinta */
+const OGNI_LUCE = 800
+/** Soglie con isteresi: sul confine la scritta non lampeggia tra bianco e nero */
+const LUCE_NERO = 0.64
+const LUCE_BIANCO = 0.52
 
 /** Aspetta che la carta vuota sia a schermo prima del lavoro pesante */
 const dopoIlDisegno = () => new Promise<void>((r) => requestAnimationFrame(() => setTimeout(r, 0)))
@@ -63,9 +70,10 @@ function svuota(c: HTMLCanvasElement | null) {
 }
 
 /**
- * SONO ___. — scegli una tua foto, scrivi chi sei in quel momento, tieni
- * premuto il titolo per strozzarlo e al rilascio diventa una storia 1080×1920.
- * Niente rete: foto e parola restano sul telefono finché non le condividi tu.
+ * SONO ___. — una fotocamera con il titolo già sopra, come un filtro: scrivi
+ * chi sei, tieni premuto il titolo per strozzarlo e al rilascio scatta e
+ * diventa una storia 1080×1920. Oppure una foto dalla galleria.
+ * Niente rete: video, foto e parola restano sul telefono finché non le condividi tu.
  */
 export default function Generatore() {
   const titolo = useRef<StrozzatoHandle>(null)
@@ -82,6 +90,7 @@ export default function Generatore() {
   const idCampo = useId()
   const idFoto = useId()
   const fotoViva = useRef<Foto | null>(null)
+  const smontato = useRef(false)
 
   const [grezzo, setGrezzo] = useState('')
   const [scatto, setScatto] = useState<Scatto>({ fase: 'chiuso' })
@@ -90,8 +99,28 @@ export default function Generatore() {
   const [foto, setFoto] = useState<Foto | null>(null)
   const [inquadratura, setInquadratura] = useState<Inquadratura>(INQUADRATURA_INIZIALE)
   const [tinta, setTinta] = useState(0)
+  /** Toccato il campione, la tinta non la sceglie più la luce */
+  const [tintaScelta, setTintaScelta] = useState(false)
   const [caricando, setCaricando] = useState(false)
+  const [lato, setLato] = useState<Lato>('user')
   const inApp = useInApp()
+  // senza foto la storia è la fotocamera
+  const { video: videoCam, stato: statoCam, specchio, piuDiUna, riprendi, riprova, cattura } = useFotocamera(!foto, lato)
+  const diretta = !foto && statoCam === 'viva'
+  // mentre si accende (o si gira) il titolo resta: la fotocamera arriva sotto
+  const conCamera = !foto && (statoCam === 'viva' || statoCam === 'apre')
+  const senzaCamera = !foto && (statoCam === 'negata' || statoCam === 'occupata' || statoCam === 'assente')
+  const conTitolo = !!foto || conCamera
+  const perche =
+    !senzaCamera
+      ? ''
+      : inApp && statoCam !== 'occupata'
+        ? 'Qui dentro la fotocamera non va: apri nel browser ↗ o scegli una foto.'
+        : statoCam === 'negata'
+          ? 'La fotocamera è bloccata: sbloccala dalle impostazioni del browser, o scegli una foto.'
+          : statoCam === 'occupata'
+            ? "La fotocamera la sta usando un'altra app: chiudila e riprova, o scegli una foto."
+            : 'Qui la fotocamera non si apre: scegli una foto.'
 
   const parola = pulisciParola(grezzo, G.maxLen)
   const scritta = maiuscola(parola) || G.esempio
@@ -99,6 +128,8 @@ export default function Generatore() {
   const bloccata = parolaBloccata(parola)
   const avviso = bloccata && avvisoPer === parola
   const aperta = scatto.fase !== 'chiuso'
+  // mentre una foto della galleria si apre non si scatta: le due foto si pesterebbero i piedi
+  const pronta = (!!foto || diretta) && !caricando
 
   const scuoti = useCallback(() => {
     const el = scossa.current
@@ -109,6 +140,7 @@ export default function Generatore() {
   // la foto vive finché non se ne sceglie un'altra o si esce
   useEffect(
     () => () => {
+      smontato.current = true
       liberaFoto(fotoViva.current)
       fotoViva.current = null
     },
@@ -120,19 +152,47 @@ export default function Generatore() {
     setCaricando(true)
     try {
       const nuova = await caricaFoto(file)
+      // usciti dalla pagina, o scattato nel frattempo: questa foto non serve più
+      if (smontato.current || occupato.current) return liberaFoto(nuova)
       liberaFoto(fotoViva.current)
       fotoViva.current = nuova
       setFoto(nuova)
       setInquadratura(INQUADRATURA_INIZIALE)
       // la tinta che si legge meglio su quella fascia della foto
-      const luce = luceZona(nuova, INQUADRATURA_INIZIALE, ZONA_SCRITTA.y0, ZONA_SCRITTA.y1)
-      setTinta(luce > 0.6 ? 1 : 0)
+      if (!tintaScelta) {
+        const luce = luceZona(nuova.bitmap, nuova, INQUADRATURA_INIZIALE, ZONA_SCRITTA.y0, ZONA_SCRITTA.y1)
+        setTinta(luce > 0.6 ? 1 : 0)
+      }
     } catch {
       scuoti()
     } finally {
       setCaricando(false)
     }
   }
+
+  /** Il fuoco su SCATTA quando il bottone toccato sparisce (✕, INQUADRA): non cade sul body */
+  const fuocoSuScatta = () => requestAnimationFrame(() => bottone.current?.focus({ preventScroll: true }))
+
+  /** Via la foto: si torna alla fotocamera dal vivo */
+  const tornaAllaFotocamera = () => {
+    liberaFoto(fotoViva.current)
+    fotoViva.current = null
+    setFoto(null)
+    setInquadratura(INQUADRATURA_INIZIALE)
+    fuocoSuScatta()
+  }
+
+  // dal vivo la tinta segue la luce della fascia dove cade la scritta, finché non la scegli tu
+  useEffect(() => {
+    if (!diretta || tintaScelta) return
+    const id = window.setInterval(() => {
+      const v = videoCam.current
+      if (!v?.videoWidth) return
+      const luce = luceZona(v, { iw: v.videoWidth, ih: v.videoHeight }, INQUADRATURA_INIZIALE, ZONA_SCRITTA.y0, ZONA_SCRITTA.y1)
+      setTinta((t) => (t === 0 && luce > LUCE_NERO ? 1 : t === 1 && luce < LUCE_BIANCO ? 0 : t))
+    }, OGNI_LUCE)
+    return () => window.clearInterval(id)
+  }, [diretta, tintaScelta, videoCam])
 
   // il titolo deve stare sempre nella foto: si misura la sua larghezza vera in em
   useLayoutEffect(() => {
@@ -153,7 +213,7 @@ export default function Generatore() {
       vivo = false
       document.fonts?.removeEventListener('loadingdone', misura)
     }
-  }, [testo, foto])
+  }, [testo, conTitolo])
 
   // parola bloccata: dopo una pausa il titolo trema forte una volta e compare la ✕
   useEffect(() => {
@@ -200,17 +260,41 @@ export default function Generatore() {
       return
     }
     const h1 = palco.current?.querySelector('h1')
-    if (occupato.current || !h1 || !foto) return
+    if (occupato.current || !h1 || !pronta) return
     occupato.current = true
     daBottone.current = dalBottone
     const id = ++giro.current
     const T = Tpicco < T_SOGLIA ? T_MINIMA : Math.min(1.1, Tpicco)
+    // l'istante del rilascio: la fisica del titolo si ferma qui, anche se la cattura chiede qualche ms
     const ora = performance.now()
     const famiglia = getComputedStyle(h1).fontFamily
     const frase = testo
     const nome = nomeFile(G.prefisso, scritta)
 
     if (!movimentoRidotto()) lampo.current?.animate([{ opacity: 0.92 }, { opacity: 0 }], { duration: 320, easing: 'ease-out' })
+
+    // dal vivo il rilascio è l'otturatore: si ferma questo fotogramma e diventa la foto
+    let sorgente = foto
+    let q = inquadratura
+    if (!sorgente) {
+      try {
+        sorgente = await cattura()
+      } catch {
+        if (giro.current === id) occupato.current = false
+        scuoti()
+        return
+      }
+      // usciti dalla pagina durante la cattura (nessuno libererebbe la foto), o arrivata una foto dalla galleria
+      if (giro.current !== id || fotoViva.current) {
+        if (giro.current === id) occupato.current = false
+        return liberaFoto(sorgente)
+      }
+      fotoViva.current = sorgente
+      q = INQUADRATURA_INIZIALE
+      setFoto(sorgente)
+      setInquadratura(q)
+    }
+
     setImparato(true)
     setScatto({ fase: 'disegna', id })
 
@@ -219,8 +303,8 @@ export default function Generatore() {
       let bozza: HTMLCanvasElement | undefined
       const blob = await esportaImmagine({
         testo: frase,
-        foto,
-        inquadratura,
+        foto: sorgente,
+        inquadratura: q,
         tinta: TINTE[tinta],
         T,
         famiglia,
@@ -274,16 +358,78 @@ export default function Generatore() {
             foto={foto}
             inquadratura={inquadratura}
             onInquadra={setInquadratura}
+            diretta={!senzaCamera}
             vuota={
-              <label htmlFor={idFoto} className={s.scegli} aria-busy={caricando || undefined}>
-                <span className={s.piuGrande} aria-hidden="true">
-                  +
-                </span>
-                <span className={s.nascosto}>Scegli una foto</span>
-              </label>
+              <>
+                {/* sempre montato senza foto: la fotocamera ci attacca il flusso appena c'è */}
+                <video
+                  ref={videoCam}
+                  className={s.video}
+                  data-specchio={specchio || undefined}
+                  data-viva={statoCam === 'viva' || undefined}
+                  muted
+                  playsInline
+                  autoPlay
+                  aria-hidden="true"
+                />
+                {statoCam === 'apre' && <p className={s.accendo}>accendo la fotocamera…</p>}
+                {statoCam === 'ferma' && (
+                  <div className={s.centro}>
+                    <button
+                      type="button"
+                      className="bottone"
+                      onClick={() => {
+                        riprendi()
+                        fuocoSuScatta()
+                      }}
+                    >
+                      INQUADRA
+                    </button>
+                  </div>
+                )}
+                {senzaCamera && (
+                  <div className={s.scegli}>
+                    <label htmlFor={idFoto} className={s.piuGrande} aria-busy={caricando || undefined}>
+                      <span aria-hidden="true">+</span>
+                      <span className={s.nascosto}>Scegli una foto</span>
+                    </label>
+                    <p className={s.motivo}>{perche}</p>
+                    {/* dopo un no il browser non richiede: riprovare serve solo se la fotocamera era occupata o non partita */}
+                    {statoCam !== 'negata' && (
+                      <button type="button" className="bottone bottone--carta" onClick={riprova}>
+                        RIPROVA
+                      </button>
+                    )}
+                  </div>
+                )}
+              </>
             }
           >
-            {foto && (
+            {foto ? (
+              <button
+                type="button"
+                className={`simbolo ${s.angolo}`}
+                data-presa
+                aria-label="Torna alla fotocamera"
+                onClick={tornaAllaFotocamera}
+              >
+                ✕
+              </button>
+            ) : (
+              piuDiUna &&
+              statoCam !== 'negata' && (
+                <button
+                  type="button"
+                  className={`simbolo ${s.angolo}`}
+                  data-presa
+                  aria-label="Gira la fotocamera"
+                  onClick={() => setLato((l) => (l === 'user' ? 'environment' : 'user'))}
+                >
+                  ⟲
+                </button>
+              )
+            )}
+            {conTitolo && (
               <div
                 ref={scossa}
                 className={s.scritta}
@@ -360,7 +506,7 @@ export default function Generatore() {
                   if (e.key !== 'Enter' || e.nativeEvent.isComposing) return
                   e.preventDefault()
                   // col mouse Invio scatta, sul telefono chiude la tastiera e lascia vedere il titolo
-                  if (foto && window.matchMedia('(pointer: fine)').matches) void scatta(T_BOTTONE, true)
+                  if (pronta && window.matchMedia('(pointer: fine)').matches) void scatta(T_BOTTONE, true)
                   else e.currentTarget.blur()
                 }}
               />
@@ -375,44 +521,47 @@ export default function Generatore() {
             </span>
           </div>
           <p className={s.nascosto} role="status">
-            {avviso ? 'Questa no.' : ''}
+            {avviso ? 'Questa no.' : perche}
           </p>
           <div className={`${s.azioni} entra`} style={conIndice(3)}>
-            {foto && (
-              <label
-                htmlFor={idFoto}
-                className="simbolo"
-                aria-label="Cambia foto"
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    e.currentTarget.click()
-                  }
-                }}
-              >
-                ↺
-              </label>
-            )}
+            {/* la galleria, sempre in basso a sinistra come in ogni fotocamera */}
+            <label
+              htmlFor={idFoto}
+              className="simbolo"
+              aria-label={foto ? 'Cambia foto dalla galleria' : 'Scegli dalla galleria'}
+              aria-busy={caricando || undefined}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  e.currentTarget.click()
+                }
+              }}
+            >
+              +
+            </label>
             <button
               ref={bottone}
               type="button"
               className="bottone"
-              disabled={bloccata || !foto}
-              onClick={() => void scatta(T_BOTTONE, true)}
+              // aria-disabled e non disabled: resta focalizzabile mentre la fotocamera si accende
+              aria-disabled={bloccata || !pronta || undefined}
+              onClick={() => pronta && void scatta(T_BOTTONE, true)}
             >
               SCATTA
             </button>
-            {foto && (
-              <button
-                type="button"
-                className={`simbolo ${s.tinta}`}
-                aria-label={`Colore della scritta: ${TINTE[tinta].id}`}
-                style={{ '--campione': TINTE[tinta].testo, '--bordo': TINTE[tinta].eco } as CSSProperties}
-                onClick={() => setTinta((t) => (t + 1) % TINTE.length)}
-              />
-            )}
+            <button
+              type="button"
+              className={`simbolo ${s.tinta}`}
+              aria-label={`Colore della scritta: ${TINTE[tinta].id}`}
+              disabled={!pronta}
+              style={{ '--campione': TINTE[tinta].testo, '--bordo': TINTE[tinta].eco } as CSSProperties}
+              onClick={() => {
+                setTintaScelta(true)
+                setTinta((t) => (t + 1) % TINTE.length)
+              }}
+            />
           </div>
         </div>
       </main>
